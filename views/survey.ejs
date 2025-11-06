@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Feedback Survey</title>
+  <style>
+    /* ALL CSS is the same as you provided - it is excellent and responsive */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #1f2937;
+    }
+
+    .survey-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      max-width: 650px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .survey-header {
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      padding: 40px 30px;
+      color: white;
+      text-align: center;
+    }
+
+    .survey-header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .survey-header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #a78bfa;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    /* ⭐️ NEW: Start screen styles */
+    #startScreen {
+      padding: 60px 40px;
+      text-align: center;
+    }
+    
+    #startScreen h2 {
+      font-size: 24px;
+      color: #1f2937;
+      margin-bottom: 15px;
+    }
+
+    #startScreen p {
+      font-size: 16px;
+      color: #4b5563;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
+    }
+    
+    /* ⭐️ UPDATED: Survey content hidden by default */
+    .survey-content {
+      padding: 40px 30px;
+      min-height: 450px;
+      display: none; /* Changed: Will be shown by JS */
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .question-section {
+      display: none;
+    }
+
+    .question-section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-counter {
+      color: #6d28d9;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    /* ⭐️ NEW: Question header to hold text and play button */
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .question-text {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1f2937;
+      line-height: 1.5;
+      margin-bottom: 0; /* Removed margin-bottom */
+    }
+    
+    /* ⭐️ NEW: TTS Play Button */
+    .tts-play-btn {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      margin-left: 15px;
+    }
+    
+    .tts-play-btn:hover {
+      background: #e5e7eb;
+    }
+    
+    .tts-play-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #6d28d9;
+    }
+
+    .audio-section {
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+
+    .audio-section.recording {
+      background: #fef2f2;
+      border-color: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    .recording-indicator {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: #fee2e2;
+      border-radius: 8px;
+      color: #dc2626;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .recording-indicator.active {
+      display: flex;
+    }
+
+    .pulse {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #dc2626;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-direction: column;
+    }
+
+    .control-button {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .record-btn {
+      background: #ef4444;
+      color: white;
+    }
+
+    .record-btn:hover:not(:disabled) {
+      background: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
+    }
+
+    .record-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .stop-btn {
+      background: #6366f1;
+      color: white;
+    }
+
+    .stop-btn:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .playback-section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 2px solid #e5e7eb;
+      display: none;
+    }
+
+    .playback-section.show {
+      display: block;
+    }
+
+    .playback-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    audio {
+      width: 100%;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+
+    .timer {
+      font-size: 16px;
+      color: #ef4444;
+      font-weight: 700;
+      text-align: center;
+      min-height: 24px;
+      margin-bottom: 12px;
+    }
+
+    .status-message {
+      text-align: center;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status-message.show {
+      display: block;
+    }
+
+    .status-message.success {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    .status-message.processing {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(30, 64, 175, 0.3);
+      border-top-color: #1e40af;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .navigation {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+      color: #6b7280;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      border-color: #6d28d9;
+      color: #6d28d9;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .nav-btn.next {
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      color: white;
+      border: none;
+    }
+
+    .nav-btn.next:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
+    }
+
+    .submit-section {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      padding: 25px;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      margin-top: 30px;
+      display: none;
+    }
+
+    .submit-section.show {
+      display: block;
+    }
+
+    .submit-section h3 {
+      margin-bottom: 20px; /* Increased margin */
+      font-size: 18px;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 12px 24px;
+      background: white;
+      color: #059669;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .survey-header h1 {
+        font-size: 22px;
+      }
+      
+      /* ⭐️ NEW: Responsive start screen */
+      #startScreen {
+        padding: 40px 20px;
+      }
+
+      .question-text {
+        font-size: 18px;
+      }
+
+      .survey-content {
+        padding: 25px 20px;
+        min-height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="survey-container">
+    <div class="survey-header">
+      <h1 id="surveyTitle">Audio Feedback Survey</h1>
+      <p id="surveyDesc">Your voice matters to us</p>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div id="startScreen">
+      <h2>Welcome!</h2>
+      <p>This is an audio-only survey. For each question, the question will be read aloud, and your microphone will automatically turn on to record your response. Click "Stop Recording" to advance to the next question.</p>
+      <button class="start-btn" onclick="startSurvey()">Start Survey</button>
+    </div>
+
+    <div class="survey-content" id="surveyContent">
+      <div>
+        <div id="questionsContainer"></div>
+      </div>
+
+      <div class="navigation" id="navigationButtons" style="display: none;">
+        <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" style="margin-right: auto;">← Previous</button>
+        <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next →</button>
+      </div>
+
+      <div class="submit-section" id="submitSection">
+        <h3>Ready to submit your feedback?</h3>
+        <button class="submit-btn" id="submitBtn" onclick="submitResponse()">Submit Survey</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let questionnaire = {};
+    let currentQuestion = 0;
+    let responses = {};
+    let mediaRecorder = null;
+    let recordingStartTime = 0;
+    let timerInterval = null;
+
+    let respondentEmail = '';
+    let currentAudio = null;
+    let audioCache = {};
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        respondentEmail = urlParams.get('email') || '';
+        if (respondentEmail) {
+          console.log('Email pre-filled:', respondentEmail);
+        }
+      } catch (e) {
+        console.error('Could not parse URL params', e);
+      }
+
+      const qData = <%- questionnaire %>;
+      questionnaire = qData;
+
+      document.getElementById('surveyTitle').textContent = questionnaire.title;
+      document.getElementById('surveyDesc').textContent = questionnaire.description;
+      
+      // We wait for the user to click "Start"
+      // renderQuestions();
+      // showQuestion(0); // <-- This is removed from here
+      // updateProgress();
+    });
+    
+    // ⭐️ NEW: Called by the "Start Survey" button
+    function startSurvey() {
+      // Hide start screen, show survey
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('surveyContent').style.display = 'flex';
+      
+      // Now we render and show the first question
+      renderQuestions();
+      updateProgress();
+      showQuestion(0); // This will now work, as it's after a user click
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      questionnaire.questions.forEach((q, i) => {
+        const section = document.createElement('div');
+        section.className = 'question-section';
+        section.id = `question-${i}`;
+        // ⭐️ UPDATED: Added question-header and tts-play-btn
+        section.innerHTML = `
+          <div class="question-counter">Question ${i + 1} of ${questionnaire.questions.length}</div>
+          
+          <div class="question-header">
+            <div class="question-text">${q.text}</div>
+            <button class="tts-play-btn" id="playBtn-${i}" onclick="playQuestionAudio(${i})">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path d="M16.5 12C16.5 10.23 15.48 8.71 14 7.97V16.02C15.48 15.29 16.5 13.77 16.5 12ZM5 9V15H9L14 20V4L9 9H5Z"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="audio-section" id="audioSection-${i}">
+            <div class="recording-indicator" id="recordingInd-${i}">
+              <span class="pulse"></span>
+              <span>Recording in progress...</span>
+            </div>
+
+            <div class="status-message" id="status-${i}"></div>
+            <div class="timer" id="timer-${i}"></div>
+
+            <div class="button-group" id="buttonGroup-${i}">
+              <button class="control-button record-btn" id="record-${i}" onclick="startRecording(${i})">
+                🎤 Start Recording
+              </button>
+            </div>
+
+            <div class="playback-section" id="playback-${i}">
+              <span class="playback-label">Your Recording</span>
+              <audio id="audio-${i}" controls></audio>
+            </div>
+          </div>
+        `;
+        container.appendChild(section);
+      });
+    }
+
+    // ⭐️ UPDATED: Function to play TTS audio
+    async function playQuestionAudio(index) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+
+      const question = questionnaire.questions[index];
+      if (!question) return;
+
+      // Disable play button while fetching/playing
+      const playBtn = document.getElementById(`playBtn-${index}`);
+      if(playBtn) playBtn.disabled = true;
+
+      try {
+        let audioToPlay;
+        if (audioCache[index]) {
+          audioToPlay = audioCache[index];
+          audioToPlay.currentTime = 0;
+        } else {
+          const response = await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: question.text })
+          });
+
+          if (!response.ok) throw new Error('Failed to fetch audio');
+
+          const blob = await response.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          audioToPlay = new Audio(audioUrl);
+          audioCache[index] = audioToPlay;
+        }
+        
+        currentAudio = audioToPlay;
+        
+        // ⭐️ NEW: Auto-start recording when TTS finishes
+        currentAudio.onended = () => {
+          if (playBtn) playBtn.disabled = false; // Re-enable play button
+          
+          // Only auto-start if not already recording
+          const recordBtn = document.getElementById(`record-${currentQuestion}`);
+          if (recordBtn && !recordBtn.classList.contains('stop-btn')) {
+             startRecording(currentQuestion);
+          }
+        };
+        
+        // Re-enable button if playing errors
+        currentAudio.onerror = () => {
+           if (playBtn) playBtn.disabled = false;
+        }
+
+        await currentAudio.play();
+
+      } catch (error) {
+        console.error('Error playing TTS audio:', error);
+        if (playBtn) playBtn.disabled = false; // Re-enable on error
+      }
+    }
+
+
+    function showQuestion(index) {
+      document.querySelectorAll('.question-section').forEach(el => el.classList.remove('active'));
+      
+      const questionEl = document.getElementById(`question-${index}`);
+      if (!questionEl) {
+        // This means we are past the last question, show submit
+        document.getElementById('submitSection').classList.add('show');
+        // Hide all other elements
+        document.getElementById('questionsContainer').style.display = 'none';
+        document.getElementById('navigationButtons').style.display = 'none';
+        return;
+      }
+      
+      questionEl.classList.add('active');
+      currentQuestion = index;
+      updateProgress();
+
+      // Play audio for the question (this is the auto-play)
+      playQuestionAudio(index);
+
+      // ⭐️ UPDATED: Simplified navigation logic
+      const onLastQuestion = index === questionnaire.questions.length - 1;
+      document.getElementById('submitSection').classList.toggle('show', onLastQuestion);
+      
+      // Hide nav buttons completely, we auto-advance
+      document.getElementById('navigationButtons').style.display = 'none';
+    }
+
+    function updateProgress() {
+      // ⭐️ UPDATED: Progress is now based on questions *shown*
+      const progress = (currentQuestion / questionnaire.questions.length) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    async function startRecording(questionIndex) {
+      if (currentAudio) {
+        currentAudio.pause();
+      }
+
+      // Hide the 'Start Recording' button, show the 'Stop Recording' button
+      const recordBtn = document.getElementById(`record-${questionIndex}`);
+      // ⭐️ UPDATED: Change button text and function
+      recordBtn.textContent = '⏹ Stop Recording';
+      recordBtn.className = 'control-button stop-btn'; // Make it the stop button
+
+      // We need to store the stream to stop it later
+      let stream;
+      
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        
+        const chunks = [];
+        recordingStartTime = Date.now();
+        let seconds = 0;
+        
+        // ⭐️ UPDATED: The button's onclick is now stopRecording
+        recordBtn.onclick = () => stopRecording(questionIndex, chunks, stream);
+
+        document.getElementById(`audioSection-${questionIndex}`).classList.add('recording');
+        document.getElementById(`recordingInd-${questionIndex}`).classList.add('active');
+
+        timerInterval = setInterval(() => {
+          seconds++;
+          document.getElementById(`timer-${questionIndex}`).textContent = `${seconds}s`;
+        }, 1000);
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          clearInterval(timerInterval);
+          const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+          processAudio(questionIndex, audioBlob);
+        };
+
+        mediaRecorder.start();
+      } catch (error) {
+        showStatus(questionIndex, '❌ Microphone access denied', 'processing');
+        console.error('Microphone error:', error);
+        
+        // Reset button on error
+        recordBtn.textContent = '🎤 Start Recording';
+        recordBtn.className = 'control-button record-btn';
+        recordBtn.onclick = () => startRecording(questionIndex);
+      }
+    }
+
+    function stopRecording(questionIndex, chunks, stream) {
+      if (mediaRecorder) {
+        mediaRecorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+
+        document.getElementById(`audioSection-${questionIndex}`).classList.remove('recording');
+        document.getElementById(`recordingInd-${questionIndex}`).classList.remove('active');
+        document.getElementById(`timer-${questionIndex}`).textContent = '';
+      }
+    }
+
+    function processAudio(questionIndex, audioBlob) {
+      const url = URL.createObjectURL(audioBlob);
+      document.getElementById(`audio-${questionIndex}`).src = url;
+      document.getElementById(`playback-${questionIndex}`).classList.add('show');
+
+      // ⭐️ UPDATED: Reset button to be "Re-record"
+      const recordBtn = document.getElementById(`record-${questionIndex}`);
+      recordBtn.textContent = '🎤 Re-record';
+      recordBtn.className = 'control-button record-btn';
+      recordBtn.onclick = () => startRecording(questionIndex);
+
+      showStatus(questionIndex, '✓ Recording saved!', 'success');
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1];
+        responses[questionIndex] = {
+          audio: base64,
+          questionId: questionIndex,
+          questionText: questionnaire.questions[questionIndex].text
+        };
+        
+        // ⭐️ NEW: Auto-advance to next question
+        if (currentQuestion < questionnaire.questions.length - 1) {
+          nextQuestion();
+        } else {
+          // This was the last question, so just update progress
+          document.getElementById('progressFill').style.width = '100%';
+          // Show the submit section (it should already be visible, but double-check)
+          document.getElementById('submitSection').classList.add('show');
+        }
+      };
+      reader.readAsDataURL(audioBlob);
+    }
+
+    function showStatus(questionIndex, message, type) {
+      const statusEl = document.getElementById(`status-${questionIndex}`);
+      statusEl.textContent = message;
+      statusEl.className = `status-message show ${type}`;
+      if (type === 'success') {
+        setTimeout(() => {
+          statusEl.classList.remove('show');
+        }, 3000);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questionnaire.questions.length - 1) {
+        showQuestion(currentQuestion + 1);
+      }
+    }
+
+    function previousQuestion() {
+      // Note: Auto-advance makes "previous" tricky.
+      // This function is no longer called by any button,
+      // but we leave it in case you want to add it back.
+      if (currentQuestion > 0) {
+        showQuestion(currentQuestion - 1);
+      }
+    }
+
+    async function submitResponse() {
+      if (!respondentEmail) {
+        alert('Error: No respondent email found. Please use the link from your email.');
+        return;
+      }
+
+      if (Object.keys(responses).length === 0) {
+        alert('Please record at least one response');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        const response = await fetch('/api/submit-response', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            questionnaireId: questionnaire._id,
+            respondentName: respondentEmail, // Use email as name
+            respondentEmail: respondentEmail,
+            responses: Object.values(responses)
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          if (currentAudio) {
+            currentAudio.pause();
+          }
+          document.querySelector('.survey-container').innerHTML = `
+            <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); padding: 60px 40px; color: white; text-align: center; border-radius: 16px;">
+              <div style="font-size: 48px; margin-bottom: 20px;">✓</div>
+              <h2 style="font-size: 28px; margin-bottom: 15px;">Thank You!</h2>
+              <p style="font-size: 16px; opacity: 0.9; margin-bottom: 30px;">Your feedback has been submitted successfully. We appreciate your time!</p>
+              <a href="/" style="background: white; color: #059669; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">Back to Home</a>
+            </div>
+          `;
+        } else {
+          alert('Error: ' + result.error);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Survey';
+        }
+      } catch (error) {
+        alert('Error submitting response: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Survey';
+      }
+    }
+  </script>
+</body>
+</html>
