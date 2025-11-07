@@ -1,14 +1,11 @@
-<!-- ============================================
-     ADMIN PANEL (views/admin.ejs)
-     ============================================ -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Audio Feedback</title>
+  <title>Admin Dashboard - Audio Feedback</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -54,7 +51,7 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 30px;
     }
@@ -64,6 +61,7 @@
       gap: 10px;
       margin-bottom: 30px;
       border-bottom: 2px solid #e5e7eb;
+      overflow-x: auto;
     }
 
     .tab-btn {
@@ -76,6 +74,7 @@
       cursor: pointer;
       color: #6b7280;
       transition: all 0.3s ease;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -96,10 +95,43 @@
       from {
         opacity: 0;
       }
-
       to {
         opacity: 1;
       }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #6d28d9;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 5px;
     }
 
     .form-section {
@@ -107,6 +139,104 @@
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      position: relative;
+      height: 400px;
+    }
+
+    .chart-container h3 {
+      margin-bottom: 20px;
+      color: #1f2937;
+      font-size: 18px;
+    }
+
+    .themes-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .theme-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid #6d28d9;
+    }
+
+    .theme-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .theme-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 15px;
+    }
+
+    .theme-count {
+      background: #6d28d9;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .theme-keywords {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    .keyword-tag {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #4c1d95;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .responses-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .responses-table th {
+      background: #f3f4f6;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .responses-table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 13px;
+    }
+
+    .responses-table tr:hover {
+      background: #f9fafb;
     }
 
     .form-group {
@@ -122,7 +252,8 @@
     }
 
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 12px;
       border: 2px solid #e5e7eb;
@@ -133,7 +264,8 @@
     }
 
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #6d28d9;
       box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
@@ -290,6 +422,15 @@
       background: #eff6ff;
     }
 
+    .action-btn.analytics {
+      color: #10b981;
+      border-color: #10b981;
+    }
+
+    .action-btn.analytics:hover {
+      background: #d1fae5;
+    }
+
     .empty-state {
       text-align: center;
       padding: 60px 30px;
@@ -326,6 +467,8 @@
       border-radius: 12px;
       max-width: 600px;
       width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .close-modal {
@@ -375,33 +518,58 @@
       background: #5b21b6;
     }
 
-    .success-msg {
-      background: #d1fae5;
-      color: #047857;
+    .success-msg,
+    .error-msg {
       padding: 12px;
       border-radius: 6px;
       margin-bottom: 15px;
       font-size: 13px;
       display: none;
+    }
+
+    .success-msg {
+      background: #d1fae5;
+      color: #047857;
     }
 
     .error-msg {
       background: #fee2e2;
       color: #dc2626;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      font-size: 13px;
+    }
+
+    .loading-spinner {
       display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #6d28d9;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @media (max-width: 768px) {
-      .questionnaires-grid {
+      .questionnaires-grid,
+      .stats-grid {
         grid-template-columns: 1fr;
       }
 
       .container {
         padding: 15px;
+      }
+
+      .chart-container {
+        height: 300px;
       }
     }
   </style>
@@ -409,19 +577,56 @@
 
 <body>
   <div class="navbar">
-    <h1>🎤 Admin Panel</h1>
+    <h1>🎤 Admin Dashboard</h1>
     <a href="/" class="back-btn">← Back Home</a>
   </div>
 
   <div class="container">
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('create')">Create Survey</button>
-      <button class="tab-btn" onclick="switchTab('list')">My Surveys</button>
-      <button class="tab-btn" onclick="switchTab('results')">Results</button>
+      <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('create')">➕ Create Survey</button>
+      <button class="tab-btn" onclick="switchTab('list')">📋 My Surveys</button>
+      <button class="tab-btn" onclick="switchTab('analytics')">📈 Analytics</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-label">Total Surveys</div>
+          <div class="stat-value" id="totalSurveys">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Total Responses</div>
+          <div class="stat-value" id="totalResponses">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-label">Avg Response Time</div>
+          <div class="stat-value" id="avgResponseTime">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">Response Rate</div>
+          <div class="stat-value" id="responseRate">-</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>Response Trends</h3>
+        <canvas id="responseTrendChart"></canvas>
+      </div>
+
+      <div class="themes-section">
+        <h3 style="margin-bottom: 20px;">🎯 Key Themes (NVivo Coding)</h3>
+        <div id="dashboardThemes"></div>
+      </div>
     </div>
 
     <!-- CREATE SURVEY TAB -->
-    <div id="create" class="tab-content active">
+    <div id="create" class="tab-content">
       <div class="form-section">
         <div class="success-msg" id="successMsg">✓ Survey created successfully!</div>
         <div class="error-msg" id="errorMsg"></div>
@@ -439,8 +644,7 @@
         </div>
 
         <div style="margin-bottom: 20px;">
-          <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #374151;">Questions (at least
-            3)</label>
+          <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #374151;">Questions (at least 3)</label>
           <div class="questions-container" id="questionsContainer"></div>
           <button class="add-question-btn" onclick="addQuestion()">+ Add Question</button>
         </div>
@@ -454,9 +658,51 @@
       <div id="surveysContainer"></div>
     </div>
 
-    <!-- RESULTS TAB -->
-    <div id="results" class="tab-content">
-      <div id="resultsContainer"></div>
+    <!-- ANALYTICS TAB -->
+    <div id="analytics" class="tab-content">
+      <div class="form-section">
+        <h2 style="margin-bottom: 20px;">Survey Analytics</h2>
+        <div class="form-group">
+          <label>Select Survey</label>
+          <select id="analyticsSurveySelect" onchange="loadSurveyAnalytics()">
+            <option value="">-- Select a survey --</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="analyticsContent" style="display: none;">
+        <div class="loading-spinner" id="analyticsLoading">
+          <div class="spinner"></div>
+          <p style="margin-top: 15px; color: #6b7280;">Analyzing responses...</p>
+        </div>
+
+        <div class="stats-grid" id="surveyStats"></div>
+
+        <div class="chart-container">
+          <h3>Response Distribution</h3>
+          <canvas id="responseDistChart"></canvas>
+        </div>
+
+        <div class="themes-section">
+          <h3 style="margin-bottom: 20px;">🎯 Identified Themes (NVivo Coding)</h3>
+          <div id="themesContainer"></div>
+        </div>
+
+        <div class="form-section">
+          <h3 style="margin-bottom: 20px;">📝 Detailed Responses</h3>
+          <table class="responses-table" id="responsesTable">
+            <thead>
+              <tr>
+                <th>Respondent</th>
+                <th>Date</th>
+                <th>Question</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody id="responsesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -472,38 +718,36 @@
       </div>
 
       <div class="form-group">
-                <label>Send via Email (up to 10, comma-separated)</label>
-                <textarea id="recipientEmails" placeholder="user1@example.com, user2@example.com, ..."
-          rows="4"></textarea>
-            </div>
+        <label>Send via Email (up to 10, comma-separated)</label>
+        <textarea id="recipientEmails" placeholder="user1@example.com, user2@example.com, ..." rows="4"></textarea>
+      </div>
       <button class="submit-btn" onclick="sendViaEmail()" style="margin-top: 15px;">Send to All</button>
     </div>
   </div>
 
   <script>
     let surveys = [];
+    let allResponses = [];
+    let responseTrendChart = null;
+    let responseDistChart = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       addQuestion();
       addQuestion();
       addQuestion();
       loadSurveys();
+      loadDashboard();
     });
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(tabName).classList.add('active');
-
-      // --- FIXED ---
-      // Find the button with the matching data-tab attribute and make it active
-      const matchingButton = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-      if (matchingButton) {
-        matchingButton.classList.add('active');
-      }
-      // --- END FIX ---
+      event.target.classList.add('active');
 
       if (tabName === 'list') loadSurveys();
+      if (tabName === 'dashboard') loadDashboard();
+      if (tabName === 'analytics') populateAnalyticsDropdown();
     }
 
     function addQuestion() {
@@ -532,11 +776,10 @@
       const title = document.getElementById('surveyTitle').value.trim();
       const description = document.getElementById('surveyDesc').value.trim();
 
-      // Get questions as array of strings - ONLY strings
       const questionElements = Array.from(document.querySelectorAll('.question-input'));
       const questions = questionElements
         .map(q => q.value.trim())
-        .filter(q => q.length > 0); // Exclude empty questions
+        .filter(q => q.length > 0);
 
       if (!title) {
         showError('Please enter a survey title');
@@ -549,15 +792,11 @@
       }
 
       try {
-        // Create clean payload with only strings in questions array
-        console.log('Preparing to create survey with questions:', questions);
         const payload = {
           title: title,
           description: description,
-          questions: questions // Array of strings only
+          questions: questions
         };
-
-        console.log('Sending payload:', JSON.stringify(payload));
 
         const response = await fetch('/api/create-questionnaire', {
           method: 'POST',
@@ -603,12 +842,11 @@
     function renderSurveys() {
       const container = document.getElementById('surveysContainer');
       if (surveys.length === 0) {
-        container.innerHTML =
-          '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No surveys created yet. Create one to get started!</p></div>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No surveys created yet. Create one to get started!</p></div>';
         return;
       }
 
-      container.innerHTML = surveys.map(s => `
+      container.innerHTML = '<div class="questionnaires-grid">' + surveys.map(s => `
         <div class="survey-card">
           <div class="card-title">${s.title}</div>
           <div class="card-desc">${s.description}</div>
@@ -617,11 +855,289 @@
             <span>${new Date(s.createdAt).toLocaleDateString()}</span>
           </div>
           <div class="card-actions">
-            <button class="action-btn view" onclick="viewResults('${s._id}')">View Results</button>
+            <button class="action-btn analytics" onclick="viewSurveyAnalytics('${s._id}')">Analytics</button>
             <button class="action-btn share" onclick="shareLink('${s.link}')">Share</button>
           </div>
         </div>
+      `).join('') + '</div>';
+    }
+
+    async function loadDashboard() {
+      try {
+        const [surveysRes, responsesRes] = await Promise.all([
+          fetch('/api/questionnaires'),
+          fetch('/api/all-responses')
+        ]);
+
+        const surveysData = await surveysRes.json();
+        surveys = surveysData.questionnaires;
+
+        let allResponses = [];
+        for (const survey of surveys) {
+          const res = await fetch(`/api/results/${survey._id}`);
+          const data = await res.json();
+          allResponses = allResponses.concat(data.responses.map(r => ({ ...r, surveyTitle: survey.title })));
+        }
+
+        document.getElementById('totalSurveys').textContent = surveys.length;
+        document.getElementById('totalResponses').textContent = allResponses.length;
+
+        const responseTrend = getResponseTrend(allResponses);
+        renderResponseTrendChart(responseTrend);
+
+        const themes = await analyzeThemes(allResponses);
+        renderDashboardThemes(themes);
+
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      }
+    }
+
+    function getResponseTrend(responses) {
+      const last7Days = [...Array(7)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+      });
+
+      const counts = last7Days.map(date => {
+        return responses.filter(r => r.submittedAt.startsWith(date)).length;
+      });
+
+      return { labels: last7Days.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })), data: counts };
+    }
+
+    function renderResponseTrendChart(trendData) {
+      const ctx = document.getElementById('responseTrendChart');
+      if (responseTrendChart) {
+        responseTrendChart.destroy();
+      }
+      responseTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trendData.labels,
+          datasets: [{
+            label: 'Responses',
+            data: trendData.data,
+            borderColor: '#6d28d9',
+            backgroundColor: 'rgba(109, 40, 217, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+
+    async function analyzeThemes(responses) {
+      if (responses.length === 0) return [];
+
+      const allText = responses.flatMap(r => 
+        r.responses.map(resp => resp.normalized)
+      ).join(' ');
+
+      try {
+        const response = await fetch('/api/analyze-themes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ responses: responses })
+        });
+
+        const result = await response.json();
+        return result.themes || [];
+      } catch (error) {
+        console.error('Error analyzing themes:', error);
+        return [];
+      }
+    }
+
+    function renderDashboardThemes(themes) {
+      const container = document.getElementById('dashboardThemes');
+      if (themes.length === 0) {
+        container.innerHTML = '<p style="color: #9ca3af;">No themes identified yet. Collect more responses to see patterns.</p>';
+        return;
+      }
+
+      container.innerHTML = themes.slice(0, 5).map(theme => `
+        <div class="theme-item">
+          <div class="theme-header">
+            <div class="theme-name">${theme.name}</div>
+            <div class="theme-count">${theme.count} mentions</div>
+          </div>
+          <div class="theme-keywords">
+            ${theme.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+          </div>
+        </div>
       `).join('');
+    }
+
+    function populateAnalyticsDropdown() {
+      const select = document.getElementById('analyticsSurveySelect');
+      select.innerHTML = '<option value="">-- Select a survey --</option>' +
+        surveys.map(s => `<option value="${s._id}">${s.title}</option>`).join('');
+    }
+
+    async function loadSurveyAnalytics() {
+      const surveyId = document.getElementById('analyticsSurveySelect').value;
+      if (!surveyId) {
+        document.getElementById('analyticsContent').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('analyticsContent').style.display = 'block';
+      document.getElementById('analyticsLoading').style.display = 'block';
+
+      try {
+        const response = await fetch(`/api/results/${surveyId}`);
+        const result = await response.json();
+        const survey = surveys.find(s => s._id === surveyId);
+
+        await renderSurveyAnalytics(survey, result.responses);
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+        showError('Error loading analytics');
+      } finally {
+        document.getElementById('analyticsLoading').style.display = 'none';
+      }
+    }
+
+    async function renderSurveyAnalytics(survey, responses) {
+      const statsHtml = `
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Total Responses</div>
+          <div class="stat-value">${responses.length}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">❓</div>
+          <div class="stat-label">Questions</div>
+          <div class="stat-value">${survey.questions.length}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">Avg Responses/Question</div>
+          <div class="stat-value">${(responses.length * survey.questions.length / survey.questions.length).toFixed(1)}</div>
+        </div>
+      `;
+      document.getElementById('surveyStats').innerHTML = statsHtml;
+
+      const questionCounts = survey.questions.map((q, idx) => {
+        return responses.reduce((count, r) => {
+          return count + (r.responses.some(resp => resp.questionId === idx + 1) ? 1 : 0);
+        }, 0);
+      });
+
+      renderResponseDistChart(survey.questions.map(q => q.text), questionCounts);
+
+      const themes = await analyzeThemes(responses);
+      renderThemes(themes);
+
+      renderResponsesTable(responses);
+    }
+
+    function renderResponseDistChart(labels, data) {
+      const ctx = document.getElementById('responseDistChart');
+      if (responseDistChart) {
+        responseDistChart.destroy();
+      }
+      responseDistChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.map((l, i) => `Q${i + 1}`),
+          datasets: [{
+            label: 'Responses',
+            data: data,
+            backgroundColor: '#6d28d9',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  return labels[context[0].dataIndex];
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderThemes(themes) {
+      const container = document.getElementById('themesContainer');
+      if (themes.length === 0) {
+        container.innerHTML = '<p style="color: #9ca3af;">No themes identified. Collect more responses to identify patterns.</p>';
+        return;
+      }
+
+      container.innerHTML = themes.map(theme => `
+        <div class="theme-item">
+          <div class="theme-header">
+            <div class="theme-name">${theme.name}</div>
+            <div class="theme-count">${theme.count} mentions</div>
+          </div>
+          <p style="font-size: 13px; color: #4b5563; margin: 8px 0;">${theme.description || ''}</p>
+          <div class="theme-keywords">
+            ${theme.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderResponsesTable(responses) {
+      const tbody = document.getElementById('responsesTableBody');
+      if (responses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #9ca3af;">No responses yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = responses.flatMap(resp => 
+        resp.responses.map(r => `
+          <tr>
+            <td><strong>${resp.respondentName}</strong><br><small style="color: #9ca3af;">${resp.respondentEmail}</small></td>
+            <td>${new Date(resp.submittedAt).toLocaleDateString()}</td>
+            <td><strong>${r.questionText}</strong></td>
+            <td>${r.normalized}</td>
+          </tr>
+        `)
+      ).join('');
+    }
+
+    function viewSurveyAnalytics(surveyId) {
+      document.getElementById('analyticsSurveySelect').value = surveyId;
+      switchTab('analytics');
+      loadSurveyAnalytics();
     }
 
     function shareLink(link) {
@@ -643,7 +1159,6 @@
       const emailString = document.getElementById('recipientEmails').value;
       const link = document.getElementById('linkText').textContent;
 
-      // 1. Split by comma, trim whitespace, and filter out empty/invalid emails
       const emails = emailString.split(',')
         .map(email => email.trim())
         .filter(email => email.length > 0 && email.includes('@'));
@@ -653,7 +1168,6 @@
         return;
       }
 
-      // 2. Enforce the 10-email limit
       if (emails.length > 10) {
         alert('You can only send to a maximum of 10 emails at a time. You have entered ' + emails.length + '.');
         return;
@@ -665,7 +1179,6 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          // 3. Send the 'recipientEmails' as an array
           body: JSON.stringify({
             surveyLink: link,
             recipientEmails: emails
@@ -675,59 +1188,13 @@
         const result = await response.json();
         if (result.success) {
           alert(`✓ Survey link sent to ${emails.length} recipients!`);
-          document.getElementById('recipientEmails').value = ''; // Clear the textarea
+          document.getElementById('recipientEmails').value = '';
           closeLinkModal();
         } else {
           alert('Error: ' + result.error);
         }
       } catch (error) {
         alert('Error: ' + error.message);
-      }
-    }
-
-    async function viewResults(surveyId) {
-      try {
-        const response = await fetch(`/api/results/${surveyId}`);
-        const result = await response.json();
-        const survey = surveys.find(s => s._id === surveyId);
-
-        let resultsHtml = '<div class="form-section">';
-        resultsHtml += `<h2 style="margin-bottom: 20px;">${survey.title} - Results (${result.responses.length})</h2>`;
-
-        if (result.responses.length === 0) {
-          resultsHtml +=
-            '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No responses yet</p></div>';
-        } else {
-          result.responses.forEach(resp => {
-            resultsHtml += `
-              <div style="border-bottom: 1px solid #e5e7eb; padding: 20px 0; margin: 20px 0;">
-                <div style="margin-bottom: 15px;">
-                  <strong>${resp.respondentName}</strong> (${resp.respondentEmail})
-                  <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">${new Date(resp.submittedAt).toLocaleString()}</div>
-                </div>
-            `;
-            resp.responses.forEach(r => {
-              resultsHtml += `
-                <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #6d28d9;">
-                  <div style="font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 13px;">Q: ${r.questionText}</div>
-                  <div style="background: white; padding: 10px; border-radius: 4px; font-size: 13px; color: #4b5563; line-height: 1.5; margin-bottom: 8px;">
-                    <strong>Transcription:</strong> ${r.transcription}
-                  </div>
-                  <div style="background: #f0f4ff; padding: 10px; border-radius: 4px; font-size: 13px; color: #4b5563; line-height: 1.5; border-left: 2px solid #6366f1;">
-                    <strong>Normalized:</strong> ${r.normalized}
-                  </div>
-                </div>
-              `;
-            });
-            resultsHtml += '</div>';
-          });
-        }
-        resultsHtml += '</div>';
-
-        document.getElementById('resultsContainer').innerHTML = resultsHtml;
-        switchTab('results');
-      } catch (error) {
-        alert('Error loading results: fgffdg' + error.message);
       }
     }
 
