@@ -1,9 +1,6 @@
-<!-- ============================================
-     LANDING PAGE (views/index.ejs)
-     ============================================ -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,15 +14,13 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      min-height: 100vh;
       color: #1f2937;
     }
 
     .navbar {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 20px 30px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      color: white;
+      padding: 20px 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -35,10 +30,9 @@
     .logo {
       font-size: 24px;
       font-weight: 700;
-      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .nav-links {
@@ -47,240 +41,352 @@
       align-items: center;
     }
 
-    .nav-links a {
-      text-decoration: none;
-      color: #4b5563;
+    .nav-btn {
+      padding: 10px 24px;
+      border-radius: 6px;
       font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
       font-size: 14px;
-      transition: color 0.3s ease;
     }
 
-    .nav-links a:hover {
+    .nav-btn.login {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-btn.login:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-btn.signup {
+      background: white;
       color: #6d28d9;
     }
 
-    .admin-btn {
-      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
-      color: white;
-      padding: 10px 24px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-block;
-    }
-
-    .admin-btn:hover {
+    .nav-btn.signup:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
+      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
     }
 
     .hero {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 80px 30px;
-      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      padding: 100px 50px;
+      text-align: center;
     }
 
-    .hero-title {
+    .hero h1 {
       font-size: 48px;
-      font-weight: 700;
       margin-bottom: 20px;
       line-height: 1.2;
     }
 
-    .hero-subtitle {
-      font-size: 18px;
-      opacity: 0.9;
+    .hero p {
+      font-size: 20px;
       margin-bottom: 40px;
+      opacity: 0.9;
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
-      line-height: 1.6;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 16px 40px;
+      background: white;
+      color: #6d28d9;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
     .features {
+      padding: 80px 50px;
+      background: white;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 60px;
+      color: #1f2937;
+    }
+
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      margin-top: 80px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      text-align: center;
       padding: 30px;
       border-radius: 12px;
-      text-align: center;
+      background: #f9fafb;
       transition: all 0.3s ease;
-      border: 2px solid transparent;
     }
 
     .feature-card:hover {
       transform: translateY(-8px);
-      border-color: #6d28d9;
-      box-shadow: 0 12px 24px rgba(109, 40, 217, 0.2);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
     .feature-icon {
-      font-size: 40px;
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 22px;
       margin-bottom: 15px;
-    }
-
-    .feature-title {
-      font-size: 18px;
-      font-weight: 600;
       color: #1f2937;
-      margin-bottom: 10px;
     }
 
-    .feature-desc {
-      font-size: 14px;
+    .feature-card p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .how-it-works {
+      padding: 80px 50px;
+      background: #f9fafb;
+    }
+
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 60px;
+      color: #1f2937;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .step {
+      text-align: center;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 auto 20px;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #1f2937;
+    }
+
+    .step p {
       color: #6b7280;
       line-height: 1.6;
     }
 
     .cta-section {
-      margin-top: 100px;
+      padding: 80px 50px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+      color: white;
       text-align: center;
     }
 
-    .cta-buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 30px;
+    .cta-section h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
     }
 
-    .btn {
-      padding: 14px 32px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
+    .cta-section p {
+      font-size: 18px;
+      margin-bottom: 40px;
+      opacity: 0.9;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+    .footer {
+      background: #1f2937;
       color: white;
+      padding: 40px 50px;
+      text-align: center;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: #6d28d9;
-      border: 2px solid #6d28d9;
-    }
-
-    .btn-secondary:hover {
-      background: #f3e8ff;
+    .footer p {
+      opacity: 0.7;
     }
 
     @media (max-width: 768px) {
-      .hero-title {
-        font-size: 32px;
+      .navbar {
+        padding: 15px 20px;
       }
 
       .hero {
-        padding: 40px 20px;
+        padding: 60px 20px;
       }
 
-      .nav-links {
-        gap: 10px;
+      .hero h1 {
+        font-size: 32px;
       }
 
-      .features {
+      .features,
+      .how-it-works,
+      .cta-section {
+        padding: 60px 20px;
+      }
+
+      .features-grid,
+      .steps {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="navbar">
-    <div class="logo">🎤 AudioFeedback</div>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="/admin" class="admin-btn">Admin Panel</a>
+  <nav class="navbar">
+    <div class="logo">
+      🎤 Audio Feedback
     </div>
-  </div>
+    <div class="nav-links" id="navLinks">
+      <a href="/login" class="nav-btn login">Login</a>
+      <a href="/signup" class="nav-btn signup">Sign Up</a>
+    </div>
+  </nav>
 
-  <div class="hero">
-    <h1 class="hero-title">Capture Voice Feedback with Ease</h1>
-    <p class="hero-subtitle">
-      Beautiful audio questionnaire platform for collecting feedback through voice. 
-      Transcribed, analyzed, and organized in one place.
-    </p>
+  <section class="hero">
+    <h1>Collect Powerful Voice Feedback with AI</h1>
+    <p>Create surveys, collect audio responses, and gain insights with AI-powered transcription and analysis.</p>
+    <a href="/signup" class="cta-button">Get Started Free</a>
+  </section>
 
-    <div class="features" id="features">
+  <section class="features">
+    <h2>Why Choose Audio Feedback?</h2>
+    <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">🎙️</div>
-        <div class="feature-title">Voice Recording</div>
-        <div class="feature-desc">Easy one-click recording with real-time transcription</div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">✨</div>
-        <div class="feature-title">Auto Transcription</div>
-        <div class="feature-desc">OpenAI Whisper converts speech to text automatically</div>
+        <h3>Voice Responses</h3>
+        <p>Collect authentic, detailed feedback through audio responses instead of typed text.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">🤖</div>
-        <div class="feature-title">AI Normalization</div>
-        <div class="feature-desc">GPT-4 cleans and normalizes transcriptions</div>
+        <h3>AI Transcription</h3>
+        <p>Automatic transcription and normalization using OpenAI Whisper technology.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">📊</div>
-        <div class="feature-title">Analytics</div>
-        <div class="feature-desc">View all responses and feedback in beautiful dashboard</div>
+        <h3>Smart Analytics</h3>
+        <p>Identify themes and patterns using NVivo-style coding and AI analysis.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">📧</div>
-        <div class="feature-title">Easy Sharing</div>
-        <div class="feature-desc">Share survey links via email with one click</div>
+        <h3>Easy Sharing</h3>
+        <p>Share surveys via email or direct link. No account required for respondents.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">🎨</div>
-        <div class="feature-title">Modern Design</div>
-        <div class="feature-desc">Beautiful, responsive interface that works everywhere</div>
-      </div>
-    </div>
-
-    <div class="cta-section" id="how-it-works">
-      <h2 style="font-size: 32px; margin-bottom: 30px;">Get Started in 3 Steps</h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin: 50px 0; text-align: left;">
-        <div style="background: rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 12px; backdrop-filter: blur(10px);">
-          <div style="font-size: 24px; font-weight: 700; color: #a78bfa; margin-bottom: 10px;">1. Create</div>
-          <div style="opacity: 0.9;">Admin creates questions and survey</div>
-        </div>
-        <div style="background: rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 12px; backdrop-filter: blur(10px);">
-          <div style="font-size: 24px; font-weight: 700; color: #a78bfa; margin-bottom: 10px;">2. Share</div>
-          <div style="opacity: 0.9;">Send link via email to respondents</div>
-        </div>
-        <div style="background: rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 12px; backdrop-filter: blur(10px);">
-          <div style="font-size: 24px; font-weight: 700; color: #a78bfa; margin-bottom: 10px;">3. Analyze</div>
-          <div style="opacity: 0.9;">View transcribed & normalized results</div>
-        </div>
+        <div class="feature-icon">🔒</div>
+        <h3>Secure & Private</h3>
+        <p>Your data is encrypted and secure. Full control over your surveys and responses.</p>
       </div>
 
-      <div class="cta-buttons">
-        <a href="/admin" class="btn btn-primary">Go to Admin Panel →</a>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Real-time Updates</h3>
+        <p>View responses as they come in with live dashboard updates.</p>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Create Account</h3>
+        <p>Sign up for free in seconds. No credit card required.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Build Survey</h3>
+        <p>Create your questionnaire with custom questions in minutes.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Share Link</h3>
+        <p>Share your survey via email or copy the link to distribute.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Collect Responses</h3>
+        <p>Respondents record audio answers directly in their browser.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <h3>Analyze Results</h3>
+        <p>View transcriptions, identify themes, and gain insights from your data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Ready to Get Started?</h2>
+    <p>Join thousands of users collecting valuable voice feedback today.</p>
+    <a href="/signup" class="cta-button">Create Free Account</a>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2024 Audio Feedback System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Check if user is already logged in
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+      if (token && user.email) {
+        const navLinks = document.getElementById('navLinks');
+        navLinks.innerHTML = `
+          <a href="${user.role === 'admin' ? '/admin' : '/dashboard'}" class="nav-btn signup">Go to Dashboard</a>
+        `;
+      }
+    });
+  </script>
 </body>
+
 </html>

@@ -1,9 +1,5 @@
 // ============================================
-// COMPLETE AUDIO FEEDBACK SYSTEM
-// ============================================
-
-// ============================================
-// 1. SERVER SETUP (app.js)
+// COMPLETE AUDIO FEEDBACK SYSTEM WITH AUTH
 // ============================================
 
 const express = require("express");
@@ -15,8 +11,17 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const { OpenAI } = require("openai");
 
-// ⭐️ NEW: Import the OpenAI configuration
+// Import configurations and models
 const openaiConfig = require("./openaiConfig");
+const Questionnaire = require("./models/Questionnaire");
+const Response = require("./models/Response");
+const User = require("./models/User");
+
+// Import middleware
+const auth = require("./middleware/authMiddleware");
+
+// Import routes
+const authRoutes = require("./routes/auth");
 
 dotenv.config();
 const app = express();
@@ -39,13 +44,13 @@ mongoose
   .connect(
     process.env.MONGODB_URI || "mongodb://localhost:27017/feedback-system",
     {
-      autoIndex: false, // Disables auto-indexing on startup
+      autoIndex: true,
     }
   )
-  .then(() => console.log("✅ MongoDB connected (AutoIndex disabled)"))
+  .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log("❌ MongoDB error:", err));
 
-// ⭐️ UPDATED: OpenAI Setup using config file
+// OpenAI Setup
 const openai = new OpenAI({
   apiKey: openaiConfig.apiKey,
   timeout: openaiConfig.timeout,
@@ -62,50 +67,12 @@ const transporter = nodemailer.createTransport({
 });
 
 // ============================================
-// 2. DATABASE SCHEMAS
+// ROUTES - Mount API Routes
 // ============================================
-
-const questionnaireSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: String,
-  // ⭐️ UPDATED: Added 'type' to the schema
-  questions: [
-    {
-      order: Number,
-      text: String,
-    },
-  ],
-  createdBy: String,
-  createdAt: { type: Date, default: Date.now },
-  link: String,
-  isActive: { type: Boolean, default: true },
-});
-
-const responseSchema = new mongoose.Schema({
-  questionnaireId: mongoose.Schema.Types.ObjectId,
-  respondentEmail: String,
-  respondentName: String,
-  responses: [
-    {
-      questionId: Number,
-      questionText: String,
-      transcription: String,
-      normalized: String,
-      timestamp: Date,
-    },
-  ],
-  submittedAt: { type: Date, default: Date.now },
-  status: { type: String, default: "completed" },
-});
-
-const Questionnaire = mongoose.model("Questionnaire", questionnaireSchema);
-const Response = mongoose.model("Response", responseSchema);
+app.use("/api/auth", authRoutes);
 
 // ============================================
-// 3. ROUTES
+// PUBLIC ROUTES (No Auth Required)
 // ============================================
 
 // LANDING PAGE
@@ -113,18 +80,61 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-// ADMIN PAGE
+// LOGIN PAGE
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+// SIGNUP PAGE
+app.get("/signup", (req, res) => {
+  res.render("signup");
+});
+
+// FORGOT PASSWORD PAGE
+app.get("/forgot-password", (req, res) => {
+  res.render("forgot-password");
+});
+
+// RESET PASSWORD PAGE
+app.get("/reset-password", (req, res) => {
+  res.render("reset-password");
+});
+
+// ADMIN DASHBOARD (Protected - Admin Only)
 app.get("/admin", (req, res) => {
-  const { adminUsername } = req.query;
-  if (adminUsername === "adminjohan") {
-    res.render("admin");
-  } else {
-    res.redirect("/");
+  // This will be accessed via frontend with JWT token
+  res.render("admin");
+});
+
+// USER DASHBOARD (Protected - Any authenticated user)
+app.get("/dashboard", (req, res) => {
+  res.render("dashboard");
+});
+
+// SURVEY PAGE (Public - Anyone with link can access)
+app.get("/survey/:link", async (req, res) => {
+  try {
+    const questionnaire = await Questionnaire.findOne({
+      link: req.params.link,
+    });
+    if (!questionnaire || !questionnaire.isActive) {
+      return res.status(404).render("not-found");
+    }
+    res.render("survey", { questionnaire: JSON.stringify(questionnaire) });
+  } catch (error) {
+    res.status(500).render("error", { error: error.message });
   }
 });
 
-// API: Create Questionnaire
-app.post("/api/create-questionnaire", async (req, res) => {
+app.get("/results/:questionnaireId", (req, res) => {
+  res.render("results");
+});
+// ============================================
+// QUESTIONNAIRE APIs (Protected)
+// ============================================
+
+// Create Questionnaire (User must be authenticated)
+app.post("/api/create-questionnaire", auth(), async (req, res) => {
   try {
     const { title, description, questions } = req.body;
 
@@ -156,7 +166,7 @@ app.post("/api/create-questionnaire", async (req, res) => {
       title: title.trim(),
       description: description ? description.trim() : "",
       questions: formattedQuestions,
-      createdBy: "admin",
+      owner: req.user.id, // From JWT token
       link: link,
     });
 
@@ -171,10 +181,12 @@ app.post("/api/create-questionnaire", async (req, res) => {
   }
 });
 
-// API: Get all questionnaires
-app.get("/api/questionnaires", async (req, res) => {
+// Get User's Questionnaires (Protected)
+app.get("/api/questionnaires", auth(), async (req, res) => {
   try {
-    const questionnaires = await Questionnaire.find({ createdBy: "admin" });
+    const questionnaires = await Questionnaire.find({
+      owner: req.user.id,
+    }).sort({ createdAt: -1 });
     res.json({ success: true, questionnaires });
   } catch (error) {
     console.error("Error fetching questionnaires:", error);
@@ -182,7 +194,7 @@ app.get("/api/questionnaires", async (req, res) => {
   }
 });
 
-// API: Get questionnaire by link
+// Get Questionnaire by Link (Public)
 app.get("/api/survey/:link", async (req, res) => {
   try {
     const questionnaire = await Questionnaire.findOne({
@@ -200,22 +212,92 @@ app.get("/api/survey/:link", async (req, res) => {
   }
 });
 
-// SURVEY PAGE
-app.get("/survey/:link", async (req, res) => {
+// ============================================
+// ADMIN ONLY APIs
+// ============================================
+
+// Get All Users (Admin Only)
+app.get("/api/admin/all-users", auth(["admin"]), async (req, res) => {
   try {
-    const questionnaire = await Questionnaire.findOne({
-      link: req.params.link,
-    });
-    if (!questionnaire || !questionnaire.isActive) {
-      return res.status(404).render("not-found");
-    }
-    res.render("survey", { questionnaire: JSON.stringify(questionnaire) });
+    const users = await User.find().select("-password");
+    res.json({ success: true, users });
   } catch (error) {
-    res.status(500).render("error", { error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// API: Text-to-Speech
+// Get All Surveys (Admin Only)
+app.get("/api/admin/all-surveys", auth(["admin"]), async (req, res) => {
+  try {
+    const surveys = await Questionnaire.find().populate("owner", "name email");
+    res.json({ success: true, surveys });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get Admin Analytics (Admin Only)
+app.get("/api/admin/analytics", auth(["admin"]), async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalSurveys = await Questionnaire.countDocuments();
+    const totalResponses = await Response.countDocuments();
+
+    const activeUsers = await User.countDocuments({
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+    });
+
+    const surveysByUser = await Questionnaire.aggregate([
+      {
+        $group: {
+          _id: "$owner",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          userName: "$user.name",
+          userEmail: "$user.email",
+          surveyCount: "$count",
+        },
+      },
+      {
+        $sort: { surveyCount: -1 },
+      },
+    ]);
+
+    res.json({
+      success: true,
+      analytics: {
+        totalUsers,
+        totalSurveys,
+        totalResponses,
+        activeUsers,
+        surveysByUser,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching analytics:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ============================================
+// TTS & RESPONSE SUBMISSION APIs
+// ============================================
+
+// Text-to-Speech (Public)
 app.post("/api/tts", async (req, res) => {
   try {
     const { text } = req.body;
@@ -224,8 +306,8 @@ app.post("/api/tts", async (req, res) => {
     }
 
     const mp3 = await openai.audio.speech.create({
-      model: "tts-1", // Config does not specify TTS model, so keeping 'tts-1'
-      voice: "alloy", // Config does not specify TTS voice, so keeping 'alloy'
+      model: "tts-1",
+      voice: "alloy",
       input: text,
     });
 
@@ -238,7 +320,7 @@ app.post("/api/tts", async (req, res) => {
   }
 });
 
-// API: Submit Response with Audio
+// Submit Response (Public)
 app.post("/api/submit-response", async (req, res) => {
   try {
     const { questionnaireId, respondentName, respondentEmail, responses } =
@@ -256,7 +338,6 @@ app.post("/api/submit-response", async (req, res) => {
       fs.writeFileSync(audioPath, audioBuffer);
 
       try {
-        // ⭐️ UPDATED: Transcribe with Whisper using config
         const transcription = await openai.audio.transcriptions.create({
           file: fs.createReadStream(audioPath),
           model: openaiConfig.whisper.model,
@@ -265,17 +346,16 @@ app.post("/api/submit-response", async (req, res) => {
           temperature: openaiConfig.whisper.temperature,
         });
 
-        // ⭐️ UPDATED: Normalize text with GPT using config
         const normalizeResponse = await openai.chat.completions.create({
           model: openaiConfig.gpt.model,
           messages: [
             {
-              role: "system", // Use system prompt from config
+              role: "system",
               content: openaiConfig.prompts.cleanTranscription,
             },
             {
               role: "user",
-              content: transcription.text, // The raw text from Whisper
+              content: transcription.text,
             },
           ],
           max_tokens: openaiConfig.gpt.maxTokens,
@@ -285,8 +365,8 @@ app.post("/api/submit-response", async (req, res) => {
         processedResponses.push({
           questionId: response.questionId,
           questionText: response.questionText,
-          transcription: transcription.text, // The original, uncleaned transcription
-          normalized: normalizeResponse.choices[0].message.content, // The cleaned text
+          transcription: transcription.text,
+          normalized: normalizeResponse.choices[0].message.content,
           timestamp: new Date(),
         });
       } catch (aiError) {
@@ -300,7 +380,6 @@ app.post("/api/submit-response", async (req, res) => {
         });
       }
 
-      // Clean up temp file
       try {
         fs.unlinkSync(audioPath);
       } catch (e) {}
@@ -308,7 +387,7 @@ app.post("/api/submit-response", async (req, res) => {
 
     const feedbackResponse = new Response({
       questionnaireId,
-      respondentName: respondentName || respondentEmail, // Use email as name
+      respondentName: respondentName || respondentEmail,
       respondentEmail,
       responses: processedResponses,
     });
@@ -321,12 +400,43 @@ app.post("/api/submit-response", async (req, res) => {
   }
 });
 
-// API: Get Results
-app.get("/api/results/:questionnaireId", async (req, res) => {
+// Get Results (Protected - Owner or Admin)
+
+app.get("/api/results/:questionnaireId", auth(), async (req, res) => {
   try {
+    const questionnaire = await Questionnaire.findById(
+      req.params.questionnaireId
+    );
+    if (!questionnaire) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Questionnaire not found" });
+    }
+    const hasOwner = !!questionnaire.owner;
+
+    const isAdmin = req.user.role === "admin";
+    let isOwner = false;
+
+    if (hasOwner) {
+      isOwner = questionnaire.owner.toString() === req.user.id;
+    }
+    if (hasOwner) {
+      if (!isOwner && !isAdmin) {
+        return res.status(403).json({ success: false, error: "Unauthorized" });
+      }
+    } else {
+      if (!isAdmin) {
+        return res.status(403).json({
+          success: false,
+          error:
+            "This survey was created before user accounts existed. Only admins can view its results.",
+        });
+      }
+    }
     const responses = await Response.find({
       questionnaireId: req.params.questionnaireId,
     });
+
     res.json({ success: true, responses });
   } catch (error) {
     console.error("Error fetching results:", error);
@@ -334,8 +444,8 @@ app.get("/api/results/:questionnaireId", async (req, res) => {
   }
 });
 
-// API: Send Survey Link via Email (Bulk)
-app.post("/api/send-survey-link", async (req, res) => {
+// Send Survey Link via Email (Protected)
+app.post("/api/send-survey-link", auth(), async (req, res) => {
   try {
     const { surveyLink, recipientEmails } = req.body;
 
@@ -398,8 +508,8 @@ app.post("/api/send-survey-link", async (req, res) => {
   }
 });
 
-// API: Analyze Themes using NVivo-style coding
-app.post("/api/analyze-themes", async (req, res) => {
+// Analyze Themes (Protected)
+app.post("/api/analyze-themes", auth(), async (req, res) => {
   try {
     const { responses } = req.body;
 
@@ -407,12 +517,10 @@ app.post("/api/analyze-themes", async (req, res) => {
       return res.json({ success: true, themes: [] });
     }
 
-    // Collect all normalized responses
     const allText = responses
       .flatMap((r) => r.responses.map((resp) => resp.normalized))
       .join("\n\n");
 
-    // Use GPT to identify themes using NVivo-style coding
     const themeAnalysis = await openai.chat.completions.create({
       model: openaiConfig.gpt.model,
       messages: [
@@ -462,7 +570,6 @@ Important:
     let themes = [];
     try {
       const content = themeAnalysis.choices[0].message.content.trim();
-      // Remove markdown code blocks if present
       const jsonContent = content
         .replace(/```json\n?/g, "")
         .replace(/```\n?/g, "")
@@ -470,13 +577,10 @@ Important:
       themes = JSON.parse(jsonContent);
     } catch (parseError) {
       console.error("Error parsing theme analysis:", parseError);
-      // Fallback to basic keyword extraction
       themes = extractBasicThemes(allText);
     }
 
-    // Sort themes by count (descending)
     themes.sort((a, b) => b.count - a.count);
-
     res.json({ success: true, themes });
   } catch (error) {
     console.error("Error analyzing themes:", error);
@@ -489,7 +593,6 @@ function extractBasicThemes(text) {
   const lowerText = text.toLowerCase();
   const themes = [];
 
-  // Define common theme patterns
   const patterns = [
     {
       name: "Customer Service",
@@ -544,55 +647,8 @@ function extractBasicThemes(text) {
   return themes;
 }
 
-// API: Get sentiment analysis for a survey
-app.post("/api/analyze-sentiment", async (req, res) => {
-  try {
-    const { responses } = req.body;
-
-    if (!responses || responses.length === 0) {
-      return res.json({
-        success: true,
-        sentiment: { positive: 0, neutral: 0, negative: 0 },
-      });
-    }
-
-    const allText = responses
-      .flatMap((r) => r.responses.map((resp) => resp.normalized))
-      .join("\n\n");
-
-    const sentimentAnalysis = await openai.chat.completions.create({
-      model: openaiConfig.gpt.model,
-      messages: [
-        {
-          role: "system",
-          content: `Analyze the sentiment of survey responses. Return ONLY a JSON object with this structure:
-{
-  "positive": <number of positive responses>,
-  "neutral": <number of neutral responses>,
-  "negative": <number of negative responses>,
-  "overall": "<positive|neutral|negative>"
-}`,
-        },
-        {
-          role: "user",
-          content: `Analyze sentiment: ${allText}`,
-        },
-      ],
-      temperature: 0.2,
-      max_tokens: 200,
-    });
-
-    const sentiment = JSON.parse(sentimentAnalysis.choices[0].message.content);
-    res.json({ success: true, sentiment });
-  } catch (error) {
-    console.error("Error analyzing sentiment:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
 // Start server
-app.listen(process.env.PORT || 3000, () => {
-  console.log(
-    `🚀 Server running on http://localhost:${process.env.PORT || 3000}`
-  );
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Audio Feedback Survey</title>
   <style>
-    /* ALL CSS is the same as you provided - it is excellent and responsive */
     * {
       margin: 0;
       padding: 0;
@@ -50,6 +50,16 @@
       font-size: 14px;
     }
 
+    .user-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
     .progress-bar {
       height: 4px;
       background: rgba(255, 255, 255, 0.3);
@@ -63,13 +73,12 @@
       width: 0%;
       transition: width 0.3s ease;
     }
-    
-    /* ⭐️ NEW: Start screen styles */
+
     #startScreen {
       padding: 60px 40px;
       text-align: center;
     }
-    
+
     #startScreen h2 {
       font-size: 24px;
       color: #1f2937;
@@ -95,17 +104,16 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    
+
     .start-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
     }
-    
-    /* ⭐️ UPDATED: Survey content hidden by default */
+
     .survey-content {
       padding: 40px 30px;
       min-height: 450px;
-      display: none; /* Changed: Will be shown by JS */
+      display: none;
       flex-direction: column;
       justify-content: space-between;
     }
@@ -120,8 +128,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .question-counter {
@@ -132,8 +147,7 @@
       letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
-    
-    /* ⭐️ NEW: Question header to hold text and play button */
+
     .question-header {
       display: flex;
       justify-content: space-between;
@@ -146,10 +160,9 @@
       font-weight: 600;
       color: #1f2937;
       line-height: 1.5;
-      margin-bottom: 0; /* Removed margin-bottom */
+      margin-bottom: 0;
     }
-    
-    /* ⭐️ NEW: TTS Play Button */
+
     .tts-play-btn {
       background: #f3f4f6;
       border: none;
@@ -164,11 +177,16 @@
       flex-shrink: 0;
       margin-left: 15px;
     }
-    
+
     .tts-play-btn:hover {
       background: #e5e7eb;
     }
-    
+
+    .tts-play-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .tts-play-btn svg {
       width: 20px;
       height: 20px;
@@ -216,8 +234,15 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
     }
 
     .button-group {
@@ -341,7 +366,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .navigation {
@@ -401,10 +428,10 @@
     }
 
     .submit-section h3 {
-      margin-bottom: 20px; /* Increased margin */
+      margin-bottom: 20px;
       font-size: 18px;
     }
-    
+
     .submit-btn {
       width: 100%;
       padding: 12px 24px;
@@ -432,8 +459,7 @@
       .survey-header h1 {
         font-size: 22px;
       }
-      
-      /* ⭐️ NEW: Responsive start screen */
+
       #startScreen {
         padding: 40px 20px;
       }
@@ -449,11 +475,13 @@
     }
   </style>
 </head>
+
 <body>
   <div class="survey-container">
     <div class="survey-header">
       <h1 id="surveyTitle">Audio Feedback Survey</h1>
       <p id="surveyDesc">Your voice matters to us</p>
+      <div id="userBadge" style="display: none;" class="user-badge"></div>
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -461,7 +489,9 @@
 
     <div id="startScreen">
       <h2>Welcome!</h2>
-      <p>This is an audio-only survey. For each question, the question will be read aloud, and your microphone will automatically turn on to record your response. Click "Stop Recording" to advance to the next question.</p>
+      <p id="startMessage">This is an audio-only survey. For each question, the question will be read aloud, and your
+        microphone will automatically turn on to record your response. Click "Stop Recording" to advance to the next
+        question.</p>
       <button class="start-btn" onclick="startSurvey()">Start Survey</button>
     </div>
 
@@ -471,7 +501,8 @@
       </div>
 
       <div class="navigation" id="navigationButtons" style="display: none;">
-        <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" style="margin-right: auto;">← Previous</button>
+        <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" style="margin-right: auto;">←
+          Previous</button>
         <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">Next →</button>
       </div>
 
@@ -491,43 +522,87 @@
     let timerInterval = null;
 
     let respondentEmail = '';
+    let respondentName = '';
+    let isAuthenticated = false;
+    let currentUser = null;
     let currentAudio = null;
     let audioCache = {};
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        respondentEmail = urlParams.get('email') || '';
-        if (respondentEmail) {
-          console.log('Email pre-filled:', respondentEmail);
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+
+        if (token && user) {
+          currentUser = JSON.parse(user);
+          isAuthenticated = true;
+          respondentEmail = currentUser.email;
+          respondentName = currentUser.name;
+
+          // Show user badge
+          const badge = document.getElementById('userBadge');
+          badge.textContent = `Responding as: ${currentUser.name}`;
+          badge.style.display = 'inline-block';
+
+          // Update welcome message
+          document.getElementById('startMessage').textContent =
+            `Hi ${currentUser.name.split(' ')[0]}! This is an audio-only survey. For each question, the question will be read aloud, and your microphone will automatically turn on to record your response. Click "Stop Recording" to advance to the next question.`;
+        } else {
+          // Check for email in URL (anonymous response)
+          const urlParams = new URLSearchParams(window.location.search);
+          respondentEmail = urlParams.get('email') || '';
+
+          if (!respondentEmail) {
+            // No authentication and no email - redirect to login
+            if (confirm('You need to be logged in or have a survey link with email to respond. Would you like to log in?')) {
+              window.location.href = '/login';
+            }
+            return;
+          }
+
+          respondentName = respondentEmail; // Use email as name for anonymous
+          console.log('Anonymous response mode - Email:', respondentEmail);
         }
+
+        // ✅ CRITICAL FIX: Removed space after % in EJS syntax
+        const qData = <%- questionnaire %>;
+        questionnaire = qData;
+
+        console.log('Loaded questionnaire:', questionnaire);
+        console.log('Questions:', questionnaire.questions);
+
+        // ✅ ENHANCED VALIDATION: Check if questionnaire data is valid
+        if (!questionnaire || !questionnaire.questions || questionnaire.questions.length === 0) {
+          console.error('Invalid questionnaire data:', questionnaire);
+          alert('Error: Survey data is missing or invalid. Please try accessing the survey again.');
+          return;
+        }
+
+        // Update UI with questionnaire info
+        document.getElementById('surveyTitle').textContent = questionnaire.title;
+        document.getElementById('surveyDesc').textContent = questionnaire.description || 'Your voice matters to us';
+
       } catch (e) {
-        console.error('Could not parse URL params', e);
+        console.error('Error during initialization:', e);
+        alert('Error loading survey: ' + e.message);
+      }
+    });
+
+    function startSurvey() {
+      // ✅ ENHANCED VALIDATION: Check before starting survey
+      if (!questionnaire || !questionnaire.questions || questionnaire.questions.length === 0) {
+        alert('Survey data not loaded properly. Please refresh the page.');
+        return;
       }
 
-      const qData = <%- questionnaire %>;
-      questionnaire = qData;
-
-      document.getElementById('surveyTitle').textContent = questionnaire.title;
-      document.getElementById('surveyDesc').textContent = questionnaire.description;
-      
-      // We wait for the user to click "Start"
-      // renderQuestions();
-      // showQuestion(0); // <-- This is removed from here
-      // updateProgress();
-    });
-    
-    // ⭐️ NEW: Called by the "Start Survey" button
-    function startSurvey() {
-      // Hide start screen, show survey
       document.getElementById('startScreen').style.display = 'none';
       document.getElementById('surveyContent').style.display = 'flex';
-      
-      // Now we render and show the first question
+
       renderQuestions();
       updateProgress();
-      showQuestion(0); // This will now work, as it's after a user click
+      showQuestion(0);
     }
 
     function renderQuestions() {
@@ -536,13 +611,12 @@
         const section = document.createElement('div');
         section.className = 'question-section';
         section.id = `question-${i}`;
-        // ⭐️ UPDATED: Added question-header and tts-play-btn
         section.innerHTML = `
           <div class="question-counter">Question ${i + 1} of ${questionnaire.questions.length}</div>
           
           <div class="question-header">
             <div class="question-text">${q.text}</div>
-            <button class="tts-play-btn" id="playBtn-${i}" onclick="playQuestionAudio(${i})">
+            <button class="tts-play-btn" id="playBtn-${i}" onclick="playQuestionAudio(${i})" title="Play question audio">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                 <path d="M16.5 12C16.5 10.23 15.48 8.71 14 7.97V16.02C15.48 15.29 16.5 13.77 16.5 12ZM5 9V15H9L14 20V4L9 9H5Z"/>
               </svg>
@@ -574,7 +648,6 @@
       });
     }
 
-    // ⭐️ UPDATED: Function to play TTS audio
     async function playQuestionAudio(index) {
       if (currentAudio) {
         currentAudio.pause();
@@ -584,9 +657,8 @@
       const question = questionnaire.questions[index];
       if (!question) return;
 
-      // Disable play button while fetching/playing
       const playBtn = document.getElementById(`playBtn-${index}`);
-      if(playBtn) playBtn.disabled = true;
+      if (playBtn) playBtn.disabled = true;
 
       try {
         let audioToPlay;
@@ -607,64 +679,54 @@
           audioToPlay = new Audio(audioUrl);
           audioCache[index] = audioToPlay;
         }
-        
+
         currentAudio = audioToPlay;
-        
-        // ⭐️ NEW: Auto-start recording when TTS finishes
+
         currentAudio.onended = () => {
-          if (playBtn) playBtn.disabled = false; // Re-enable play button
-          
-          // Only auto-start if not already recording
+          if (playBtn) playBtn.disabled = false;
+
           const recordBtn = document.getElementById(`record-${currentQuestion}`);
           if (recordBtn && !recordBtn.classList.contains('stop-btn')) {
-             startRecording(currentQuestion);
+            startRecording(currentQuestion);
           }
         };
-        
-        // Re-enable button if playing errors
+
         currentAudio.onerror = () => {
-           if (playBtn) playBtn.disabled = false;
+          if (playBtn) playBtn.disabled = false;
         }
 
         await currentAudio.play();
 
       } catch (error) {
         console.error('Error playing TTS audio:', error);
-        if (playBtn) playBtn.disabled = false; // Re-enable on error
+        if (playBtn) playBtn.disabled = false;
+        showStatus(index, '⚠️ Audio playback failed. You can still record your answer.', 'processing');
       }
     }
 
-
     function showQuestion(index) {
       document.querySelectorAll('.question-section').forEach(el => el.classList.remove('active'));
-      
+
       const questionEl = document.getElementById(`question-${index}`);
       if (!questionEl) {
-        // This means we are past the last question, show submit
         document.getElementById('submitSection').classList.add('show');
-        // Hide all other elements
         document.getElementById('questionsContainer').style.display = 'none';
         document.getElementById('navigationButtons').style.display = 'none';
         return;
       }
-      
+
       questionEl.classList.add('active');
       currentQuestion = index;
       updateProgress();
 
-      // Play audio for the question (this is the auto-play)
       playQuestionAudio(index);
 
-      // ⭐️ UPDATED: Simplified navigation logic
       const onLastQuestion = index === questionnaire.questions.length - 1;
       document.getElementById('submitSection').classList.toggle('show', onLastQuestion);
-      
-      // Hide nav buttons completely, we auto-advance
       document.getElementById('navigationButtons').style.display = 'none';
     }
 
     function updateProgress() {
-      // ⭐️ UPDATED: Progress is now based on questions *shown*
       const progress = (currentQuestion / questionnaire.questions.length) * 100;
       document.getElementById('progressFill').style.width = progress + '%';
     }
@@ -674,24 +736,20 @@
         currentAudio.pause();
       }
 
-      // Hide the 'Start Recording' button, show the 'Stop Recording' button
       const recordBtn = document.getElementById(`record-${questionIndex}`);
-      // ⭐️ UPDATED: Change button text and function
       recordBtn.textContent = '⏹ Stop Recording';
-      recordBtn.className = 'control-button stop-btn'; // Make it the stop button
+      recordBtn.className = 'control-button stop-btn';
 
-      // We need to store the stream to stop it later
       let stream;
-      
+
       try {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
-        
+
         const chunks = [];
         recordingStartTime = Date.now();
         let seconds = 0;
-        
-        // ⭐️ UPDATED: The button's onclick is now stopRecording
+
         recordBtn.onclick = () => stopRecording(questionIndex, chunks, stream);
 
         document.getElementById(`audioSection-${questionIndex}`).classList.add('recording');
@@ -711,10 +769,9 @@
 
         mediaRecorder.start();
       } catch (error) {
-        showStatus(questionIndex, '❌ Microphone access denied', 'processing');
+        showStatus(questionIndex, '❌ Microphone access denied. Please allow microphone access and try again.', 'processing');
         console.error('Microphone error:', error);
-        
-        // Reset button on error
+
         recordBtn.textContent = '🎤 Start Recording';
         recordBtn.className = 'control-button record-btn';
         recordBtn.onclick = () => startRecording(questionIndex);
@@ -737,7 +794,6 @@
       document.getElementById(`audio-${questionIndex}`).src = url;
       document.getElementById(`playback-${questionIndex}`).classList.add('show');
 
-      // ⭐️ UPDATED: Reset button to be "Re-record"
       const recordBtn = document.getElementById(`record-${questionIndex}`);
       recordBtn.textContent = '🎤 Re-record';
       recordBtn.className = 'control-button record-btn';
@@ -750,17 +806,14 @@
         const base64 = reader.result.split(',')[1];
         responses[questionIndex] = {
           audio: base64,
-          questionId: questionIndex,
+          questionId: questionIndex + 1,
           questionText: questionnaire.questions[questionIndex].text
         };
-        
-        // ⭐️ NEW: Auto-advance to next question
+
         if (currentQuestion < questionnaire.questions.length - 1) {
           nextQuestion();
         } else {
-          // This was the last question, so just update progress
           document.getElementById('progressFill').style.width = '100%';
-          // Show the submit section (it should already be visible, but double-check)
           document.getElementById('submitSection').classList.add('show');
         }
       };
@@ -785,9 +838,6 @@
     }
 
     function previousQuestion() {
-      // Note: Auto-advance makes "previous" tricky.
-      // This function is no longer called by any button,
-      // but we leave it in case you want to add it back.
       if (currentQuestion > 0) {
         showQuestion(currentQuestion - 1);
       }
@@ -795,12 +845,12 @@
 
     async function submitResponse() {
       if (!respondentEmail) {
-        alert('Error: No respondent email found. Please use the link from your email.');
+        alert('Error: Unable to identify respondent. Please refresh and try again.');
         return;
       }
 
       if (Object.keys(responses).length === 0) {
-        alert('Please record at least one response');
+        alert('Please record at least one response before submitting.');
         return;
       }
 
@@ -814,7 +864,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             questionnaireId: questionnaire._id,
-            respondentName: respondentEmail, // Use email as name
+            respondentName: respondentName,
             respondentEmail: respondentEmail,
             responses: Object.values(responses)
           })
@@ -825,25 +875,31 @@
           if (currentAudio) {
             currentAudio.pause();
           }
+
+          const homeLink = isAuthenticated ? '/dashboard' : '/';
+          const homeLinkText = isAuthenticated ? 'Go to Dashboard' : 'Back to Home';
+
           document.querySelector('.survey-container').innerHTML = `
             <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); padding: 60px 40px; color: white; text-align: center; border-radius: 16px;">
               <div style="font-size: 48px; margin-bottom: 20px;">✓</div>
               <h2 style="font-size: 28px; margin-bottom: 15px;">Thank You!</h2>
-              <p style="font-size: 16px; opacity: 0.9; margin-bottom: 30px;">Your feedback has been submitted successfully. We appreciate your time!</p>
-              <a href="/" style="background: white; color: #059669; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">Back to Home</a>
+              <p style="font-size: 16px; opacity: 0.9; margin-bottom: 30px;">Your feedback has been submitted successfully. We appreciate your time and thoughtful responses!</p>
+              <a href="${homeLink}" style="background: white; color: #059669; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">${homeLinkText}</a>
             </div>
           `;
         } else {
-          alert('Error: ' + result.error);
+          alert('Error: ' + (result.error || 'Failed to submit response'));
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Survey';
         }
       } catch (error) {
         alert('Error submitting response: ' + error.message);
+        console.error('Submission error:', error);
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Survey';
       }
     }
   </script>
 </body>
+
 </html>

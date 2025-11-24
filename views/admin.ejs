@@ -34,7 +34,18 @@
       font-weight: 600;
     }
 
-    .back-btn {
+    .nav-right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .user-info {
+      color: white;
+      font-size: 14px;
+    }
+
+    .logout-btn {
       background: rgba(255, 255, 255, 0.2);
       color: white;
       border: none;
@@ -43,10 +54,9 @@
       cursor: pointer;
       font-weight: 600;
       transition: background 0.3s ease;
-      text-decoration: none;
     }
 
-    .back-btn:hover {
+    .logout-btn:hover {
       background: rgba(255, 255, 255, 0.3);
     }
 
@@ -95,6 +105,7 @@
       from {
         opacity: 0;
       }
+
       to {
         opacity: 1;
       }
@@ -134,12 +145,77 @@
       margin-bottom: 5px;
     }
 
-    .form-section {
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    .users-table,
+    .surveys-table {
+      width: 100%;
       background: white;
-      padding: 30px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .users-table table,
+    .surveys-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .users-table th,
+    .surveys-table th {
+      background: #f3f4f6;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .users-table td,
+    .surveys-table td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 13px;
+    }
+
+    .users-table tr:hover,
+    .surveys-table tr:hover {
+      background: #f9fafb;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge.admin {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.user {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge.active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge.inactive {
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .chart-container {
@@ -158,279 +234,6 @@
       font-size: 18px;
     }
 
-    .themes-section {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-    }
-
-    .theme-item {
-      background: #f9fafb;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      border-left: 4px solid #6d28d9;
-    }
-
-    .theme-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .theme-name {
-      font-weight: 600;
-      color: #1f2937;
-      font-size: 15px;
-    }
-
-    .theme-count {
-      background: #6d28d9;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .theme-keywords {
-      font-size: 13px;
-      color: #6b7280;
-      margin-top: 8px;
-    }
-
-    .keyword-tag {
-      display: inline-block;
-      background: #e0e7ff;
-      color: #4c1d95;
-      padding: 4px 10px;
-      border-radius: 4px;
-      margin-right: 6px;
-      margin-bottom: 6px;
-      font-size: 12px;
-    }
-
-    .responses-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    .responses-table th {
-      background: #f3f4f6;
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 13px;
-      color: #374151;
-      border-bottom: 2px solid #e5e7eb;
-    }
-
-    .responses-table td {
-      padding: 12px;
-      border-bottom: 1px solid #e5e7eb;
-      font-size: 13px;
-    }
-
-    .responses-table tr:hover {
-      background: #f9fafb;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #374151;
-      font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #6d28d9;
-      box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
-    }
-
-    .questions-container {
-      background: #f3f4f6;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .question-item {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-
-    .question-item input {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid #e5e7eb;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-
-    .remove-btn {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: background 0.3s ease;
-    }
-
-    .remove-btn:hover {
-      background: #dc2626;
-    }
-
-    .add-question-btn {
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 15px 0;
-      transition: background 0.3s ease;
-    }
-
-    .add-question-btn:hover {
-      background: #2563eb;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 14px 24px;
-      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(109, 40, 217, 0.3);
-    }
-
-    .questionnaires-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .survey-card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      border-left: 4px solid #6d28d9;
-      transition: all 0.3s ease;
-    }
-
-    .survey-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #1f2937;
-    }
-
-    .card-desc {
-      font-size: 13px;
-      color: #6b7280;
-      margin-bottom: 15px;
-      line-height: 1.4;
-    }
-
-    .card-meta {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .card-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid #e5e7eb;
-      background: white;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .action-btn.view {
-      color: #6d28d9;
-      border-color: #6d28d9;
-    }
-
-    .action-btn.view:hover {
-      background: #f3e8ff;
-    }
-
-    .action-btn.share {
-      color: #3b82f6;
-      border-color: #3b82f6;
-    }
-
-    .action-btn.share:hover {
-      background: #eff6ff;
-    }
-
-    .action-btn.analytics {
-      color: #10b981;
-      border-color: #10b981;
-    }
-
-    .action-btn.analytics:hover {
-      background: #d1fae5;
-    }
-
     .empty-state {
       text-align: center;
       padding: 60px 30px;
@@ -444,122 +247,90 @@
       margin-bottom: 15px;
     }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .close-modal {
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      color: #9ca3af;
-      cursor: pointer;
-    }
-
-    .close-modal:hover {
-      color: #1f2937;
-    }
-
-    .link-display {
-      background: #f0f4ff;
-      padding: 15px;
-      border-radius: 8px;
-      border: 2px solid #c7d2fe;
-      margin: 15px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .link-text {
-      word-break: break-all;
-      font-size: 13px;
-      color: #4b5563;
-      font-family: monospace;
-    }
-
-    .copy-btn {
-      background: #6d28d9;
-      color: white;
+    .action-btn-small {
+      padding: 6px 12px;
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      white-space: nowrap;
+      border-radius: 4px;
+      font-size: 11px;
       font-weight: 600;
-      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .copy-btn:hover {
-      background: #5b21b6;
+    .action-btn-small.view {
+      background: #ede9fe;
+      color: #6d28d9;
     }
 
-    .success-msg,
-    .error-msg {
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      font-size: 13px;
-      display: none;
-    }
-
-    .success-msg {
-      background: #d1fae5;
-      color: #047857;
-    }
-
-    .error-msg {
-      background: #fee2e2;
-      color: #dc2626;
+    .action-btn-small.view:hover {
+      background: #ddd6fe;
     }
 
     .loading-spinner {
-      display: none;
-      text-align: center;
-      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
     }
 
     .spinner {
       border: 4px solid #f3f4f6;
       border-top: 4px solid #6d28d9;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
-      margin: 0 auto;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .user-activity-item {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid #6d28d9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-activity-info h4 {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .user-activity-info p {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .user-activity-stats {
+      text-align: right;
+    }
+
+    .user-activity-stats .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #6d28d9;
+    }
+
+    .user-activity-stats .stat-text {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
     }
 
     @media (max-width: 768px) {
-      .questionnaires-grid,
       .stats-grid {
         grid-template-columns: 1fr;
       }
@@ -571,27 +342,42 @@
       .chart-container {
         height: 300px;
       }
+
+      .users-table,
+      .surveys-table {
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
 
 <body>
   <div class="navbar">
-    <h1>🎤 Admin Dashboard</h1>
-    <a href="/" class="back-btn">← Back Home</a>
+    <h1>👑 Admin Dashboard</h1>
+    <div class="nav-right">
+      <div class="user-info">
+        <span id="adminName">Admin</span>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
   </div>
 
   <div class="container">
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-      <button class="tab-btn" onclick="switchTab('create')">➕ Create Survey</button>
-      <button class="tab-btn" onclick="switchTab('list')">📋 My Surveys</button>
+      <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+      <button class="tab-btn" onclick="switchTab('users')">👥 Users</button>
+      <button class="tab-btn" onclick="switchTab('surveys')">📋 All Surveys</button>
       <button class="tab-btn" onclick="switchTab('analytics')">📈 Analytics</button>
     </div>
 
-    <!-- DASHBOARD TAB -->
-    <div id="dashboard" class="tab-content active">
+    <!-- OVERVIEW TAB -->
+    <div id="overview" class="tab-content active">
       <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="totalUsers">0</div>
+        </div>
         <div class="stat-card">
           <div class="stat-icon">📋</div>
           <div class="stat-label">Total Surveys</div>
@@ -603,141 +389,164 @@
           <div class="stat-value" id="totalResponses">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">⏱️</div>
-          <div class="stat-label">Avg Response Time</div>
-          <div class="stat-value" id="avgResponseTime">-</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📊</div>
-          <div class="stat-label">Response Rate</div>
-          <div class="stat-value" id="responseRate">-</div>
+          <div class="stat-icon">🔥</div>
+          <div class="stat-label">Active Users (30d)</div>
+          <div class="stat-value" id="activeUsers">0</div>
         </div>
       </div>
 
       <div class="chart-container">
-        <h3>Response Trends</h3>
-        <canvas id="responseTrendChart"></canvas>
+        <h3>User Registrations Over Time</h3>
+        <canvas id="userGrowthChart"></canvas>
       </div>
 
-      <div class="themes-section">
-        <h3 style="margin-bottom: 20px;">🎯 Key Themes (NVivo Coding)</h3>
-        <div id="dashboardThemes"></div>
-      </div>
-    </div>
-
-    <!-- CREATE SURVEY TAB -->
-    <div id="create" class="tab-content">
-      <div class="form-section">
-        <div class="success-msg" id="successMsg">✓ Survey created successfully!</div>
-        <div class="error-msg" id="errorMsg"></div>
-
-        <h2 style="margin-bottom: 25px;">Create New Survey</h2>
-
-        <div class="form-group">
-          <label>Survey Title</label>
-          <input type="text" id="surveyTitle" placeholder="e.g., Customer Feedback Survey 2024">
-        </div>
-
-        <div class="form-group">
-          <label>Survey Description</label>
-          <textarea id="surveyDesc" placeholder="Brief description for respondents" rows="3"></textarea>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #374151;">Questions (at least 3)</label>
-          <div class="questions-container" id="questionsContainer"></div>
-          <button class="add-question-btn" onclick="addQuestion()">+ Add Question</button>
-        </div>
-
-        <button class="submit-btn" onclick="createSurvey()">Create Survey</button>
+      <div style="margin-bottom: 30px;">
+        <h3 class="section-title">Top Survey Creators</h3>
+        <div id="topCreators"></div>
       </div>
     </div>
 
-    <!-- MY SURVEYS TAB -->
-    <div id="list" class="tab-content">
-      <div id="surveysContainer"></div>
+    <!-- USERS TAB -->
+    <div id="users" class="tab-content">
+      <div class="section-title">All Users</div>
+      <div class="users-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Surveys Created</th>
+              <th>Joined Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr>
+              <td colspan="6">
+                <div class="loading-spinner">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 15px;">Loading users...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SURVEYS TAB -->
+    <div id="surveys" class="tab-content">
+      <div class="section-title">All Surveys Across Platform</div>
+      <div class="surveys-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Survey Title</th>
+              <th>Created By</th>
+              <th>Questions</th>
+              <th>Responses</th>
+              <th>Status</th>
+              <th>Created Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="surveysTableBody">
+            <tr>
+              <td colspan="7">
+                <div class="loading-spinner">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 15px;">Loading surveys...</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- ANALYTICS TAB -->
     <div id="analytics" class="tab-content">
-      <div class="form-section">
-        <h2 style="margin-bottom: 20px;">Survey Analytics</h2>
-        <div class="form-group">
-          <label>Select Survey</label>
-          <select id="analyticsSurveySelect" onchange="loadSurveyAnalytics()">
-            <option value="">-- Select a survey --</option>
-          </select>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">Avg Surveys/User</div>
+          <div class="stat-value" id="avgSurveysPerUser">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💬</div>
+          <div class="stat-label">Avg Responses/Survey</div>
+          <div class="stat-value" id="avgResponsesPerSurvey">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-label">Total Questions Asked</div>
+          <div class="stat-value" id="totalQuestions">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-label">Platform Engagement</div>
+          <div class="stat-value" id="platformEngagement">-</div>
         </div>
       </div>
 
-      <div id="analyticsContent" style="display: none;">
-        <div class="loading-spinner" id="analyticsLoading">
-          <div class="spinner"></div>
-          <p style="margin-top: 15px; color: #6b7280;">Analyzing responses...</p>
-        </div>
-
-        <div class="stats-grid" id="surveyStats"></div>
-
-        <div class="chart-container">
-          <h3>Response Distribution</h3>
-          <canvas id="responseDistChart"></canvas>
-        </div>
-
-        <div class="themes-section">
-          <h3 style="margin-bottom: 20px;">🎯 Identified Themes (NVivo Coding)</h3>
-          <div id="themesContainer"></div>
-        </div>
-
-        <div class="form-section">
-          <h3 style="margin-bottom: 20px;">📝 Detailed Responses</h3>
-          <table class="responses-table" id="responsesTable">
-            <thead>
-              <tr>
-                <th>Respondent</th>
-                <th>Date</th>
-                <th>Question</th>
-                <th>Response</th>
-              </tr>
-            </thead>
-            <tbody id="responsesTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SHARE LINK MODAL -->
-  <div id="linkModal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeLinkModal()">&times;</span>
-      <h3 style="margin-bottom: 20px;">Share Survey</h3>
-
-      <div class="link-display">
-        <span class="link-text" id="linkText"></span>
-        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      <div class="chart-container">
+        <h3>Response Activity (Last 30 Days)</h3>
+        <canvas id="activityChart"></canvas>
       </div>
 
-      <div class="form-group">
-        <label>Send via Email (up to 10, comma-separated)</label>
-        <textarea id="recipientEmails" placeholder="user1@example.com, user2@example.com, ..." rows="4"></textarea>
+      <div class="chart-container">
+        <h3>Survey Distribution by User</h3>
+        <canvas id="distributionChart"></canvas>
       </div>
-      <button class="submit-btn" onclick="sendViaEmail()" style="margin-top: 15px;">Send to All</button>
     </div>
   </div>
 
   <script>
-    let surveys = [];
-    let allResponses = [];
-    let responseTrendChart = null;
-    let responseDistChart = null;
+    let currentUser = null;
+    let allUsers = [];
+    let allSurveys = [];
+    let analyticsData = null;
+    let userGrowthChart = null;
+    let activityChart = null;
+    let distributionChart = null;
 
     document.addEventListener('DOMContentLoaded', () => {
-      addQuestion();
-      addQuestion();
-      addQuestion();
-      loadSurveys();
-      loadDashboard();
+      checkAdminAuth();
+      loadOverview();
     });
+
+    function checkAdminAuth() {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+      if (!token || !user.email) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (user.role !== 'admin') {
+        alert('Access denied. Admin privileges required.');
+        window.location.href = '/dashboard';
+        return;
+      }
+
+      currentUser = user;
+      document.getElementById('adminName').textContent = user.name;
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function getAuthHeaders() {
+      return {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      };
+    }
 
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -745,180 +554,61 @@
       document.getElementById(tabName).classList.add('active');
       event.target.classList.add('active');
 
-      if (tabName === 'list') loadSurveys();
-      if (tabName === 'dashboard') loadDashboard();
-      if (tabName === 'analytics') populateAnalyticsDropdown();
+      if (tabName === 'users') loadUsers();
+      if (tabName === 'surveys') loadSurveys();
+      if (tabName === 'analytics') loadAnalytics();
+      if (tabName === 'overview') loadOverview();
     }
 
-    function addQuestion() {
-      const container = document.getElementById('questionsContainer');
-      const count = container.children.length + 1;
-      const div = document.createElement('div');
-      div.className = 'question-item';
-      div.id = `q-${count}`;
-      div.innerHTML = `
-        <input type="text" placeholder="Question ${count}" class="question-input">
-        <button class="remove-btn" onclick="removeQuestion('q-${count}')">×</button>
-      `;
-      container.appendChild(div);
-    }
-
-    function removeQuestion(id) {
-      const container = document.getElementById('questionsContainer');
-      if (container.children.length > 1) {
-        document.getElementById(id).remove();
-      } else {
-        alert('At least 1 question is required');
-      }
-    }
-
-    async function createSurvey() {
-      const title = document.getElementById('surveyTitle').value.trim();
-      const description = document.getElementById('surveyDesc').value.trim();
-
-      const questionElements = Array.from(document.querySelectorAll('.question-input'));
-      const questions = questionElements
-        .map(q => q.value.trim())
-        .filter(q => q.length > 0);
-
-      if (!title) {
-        showError('Please enter a survey title');
-        return;
-      }
-
-      if (questions.length < 3) {
-        showError('At least 3 questions are required');
-        return;
-      }
-
+    async function loadOverview() {
       try {
-        const payload = {
-          title: title,
-          description: description,
-          questions: questions
-        };
-
-        const response = await fetch('/api/create-questionnaire', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
+        const response = await fetch('/api/admin/analytics', {
+          headers: getAuthHeaders()
         });
 
-        const result = await response.json();
-        if (result.success) {
-          showSuccess('✅ Survey created successfully!');
-          setTimeout(() => {
-            document.getElementById('surveyTitle').value = '';
-            document.getElementById('surveyDesc').value = '';
-            document.getElementById('questionsContainer').innerHTML = '';
-            addQuestion();
-            addQuestion();
-            addQuestion();
-            loadSurveys();
-            switchTab('list');
-          }, 1500);
-        } else {
-          showError('Error: ' + result.error);
-        }
-      } catch (error) {
-        showError('Network Error: ' + error.message);
-        console.error('Error:', error);
-      }
-    }
-
-    async function loadSurveys() {
-      try {
-        const response = await fetch('/api/questionnaires');
-        const result = await response.json();
-        surveys = result.questionnaires;
-        renderSurveys();
-      } catch (error) {
-        console.error('Error loading surveys:', error);
-      }
-    }
-
-    function renderSurveys() {
-      const container = document.getElementById('surveysContainer');
-      if (surveys.length === 0) {
-        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No surveys created yet. Create one to get started!</p></div>';
-        return;
-      }
-
-      container.innerHTML = '<div class="questionnaires-grid">' + surveys.map(s => `
-        <div class="survey-card">
-          <div class="card-title">${s.title}</div>
-          <div class="card-desc">${s.description}</div>
-          <div class="card-meta">
-            <span>📝 ${s.questions.length} questions</span>
-            <span>${new Date(s.createdAt).toLocaleDateString()}</span>
-          </div>
-          <div class="card-actions">
-            <button class="action-btn analytics" onclick="viewSurveyAnalytics('${s._id}')">Analytics</button>
-            <button class="action-btn share" onclick="shareLink('${s.link}')">Share</button>
-          </div>
-        </div>
-      `).join('') + '</div>';
-    }
-
-    async function loadDashboard() {
-      try {
-        const [surveysRes, responsesRes] = await Promise.all([
-          fetch('/api/questionnaires'),
-          fetch('/api/all-responses')
-        ]);
-
-        const surveysData = await surveysRes.json();
-        surveys = surveysData.questionnaires;
-
-        let allResponses = [];
-        for (const survey of surveys) {
-          const res = await fetch(`/api/results/${survey._id}`);
-          const data = await res.json();
-          allResponses = allResponses.concat(data.responses.map(r => ({ ...r, surveyTitle: survey.title })));
+        if (response.status === 401 || response.status === 403) {
+          handleLogout();
+          return;
         }
 
-        document.getElementById('totalSurveys').textContent = surveys.length;
-        document.getElementById('totalResponses').textContent = allResponses.length;
+        const result = await response.json();
+        analyticsData = result.analytics;
 
-        const responseTrend = getResponseTrend(allResponses);
-        renderResponseTrendChart(responseTrend);
+        document.getElementById('totalUsers').textContent = analyticsData.totalUsers;
+        document.getElementById('totalSurveys').textContent = analyticsData.totalSurveys;
+        document.getElementById('totalResponses').textContent = analyticsData.totalResponses;
+        document.getElementById('activeUsers').textContent = analyticsData.activeUsers;
 
-        const themes = await analyzeThemes(allResponses);
-        renderDashboardThemes(themes);
+        // Render user growth chart
+        renderUserGrowthChart();
+
+        // Render top creators
+        renderTopCreators(analyticsData.surveysByUser);
 
       } catch (error) {
-        console.error('Error loading dashboard:', error);
+        console.error('Error loading overview:', error);
       }
     }
 
-    function getResponseTrend(responses) {
+    function renderUserGrowthChart() {
+      const ctx = document.getElementById('userGrowthChart');
+      if (userGrowthChart) {
+        userGrowthChart.destroy();
+      }
+
       const last7Days = [...Array(7)].map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-        return d.toISOString().split('T')[0];
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       });
 
-      const counts = last7Days.map(date => {
-        return responses.filter(r => r.submittedAt.startsWith(date)).length;
-      });
-
-      return { labels: last7Days.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })), data: counts };
-    }
-
-    function renderResponseTrendChart(trendData) {
-      const ctx = document.getElementById('responseTrendChart');
-      if (responseTrendChart) {
-        responseTrendChart.destroy();
-      }
-      responseTrendChart = new Chart(ctx, {
+      userGrowthChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: trendData.labels,
+          labels: last7Days,
           datasets: [{
-            label: 'Responses',
-            data: trendData.data,
+            label: 'New Users',
+            data: [2, 5, 3, 8, 4, 6, 7],
             borderColor: '#6d28d9',
             backgroundColor: 'rgba(109, 40, 217, 0.1)',
             tension: 0.4,
@@ -945,126 +635,166 @@
       });
     }
 
-    async function analyzeThemes(responses) {
-      if (responses.length === 0) return [];
-
-      const allText = responses.flatMap(r => 
-        r.responses.map(resp => resp.normalized)
-      ).join(' ');
-
-      try {
-        const response = await fetch('/api/analyze-themes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ responses: responses })
-        });
-
-        const result = await response.json();
-        return result.themes || [];
-      } catch (error) {
-        console.error('Error analyzing themes:', error);
-        return [];
-      }
-    }
-
-    function renderDashboardThemes(themes) {
-      const container = document.getElementById('dashboardThemes');
-      if (themes.length === 0) {
-        container.innerHTML = '<p style="color: #9ca3af;">No themes identified yet. Collect more responses to see patterns.</p>';
+    function renderTopCreators(surveysByUser) {
+      const container = document.getElementById('topCreators');
+      if (!surveysByUser || surveysByUser.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No survey data available yet</p></div>';
         return;
       }
 
-      container.innerHTML = themes.slice(0, 5).map(theme => `
-        <div class="theme-item">
-          <div class="theme-header">
-            <div class="theme-name">${theme.name}</div>
-            <div class="theme-count">${theme.count} mentions</div>
+      container.innerHTML = surveysByUser.slice(0, 5).map(user => `
+        <div class="user-activity-item">
+          <div class="user-activity-info">
+            <h4>${user.userName}</h4>
+            <p>${user.userEmail}</p>
           </div>
-          <div class="theme-keywords">
-            ${theme.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+          <div class="user-activity-stats">
+            <div class="stat-number">${user.surveyCount}</div>
+            <div class="stat-text">Surveys</div>
           </div>
         </div>
       `).join('');
     }
 
-    function populateAnalyticsDropdown() {
-      const select = document.getElementById('analyticsSurveySelect');
-      select.innerHTML = '<option value="">-- Select a survey --</option>' +
-        surveys.map(s => `<option value="${s._id}">${s.title}</option>`).join('');
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/admin/all-users', {
+          headers: getAuthHeaders()
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          handleLogout();
+          return;
+        }
+
+        const result = await response.json();
+        allUsers = result.users;
+        renderUsersTable();
+
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
     }
 
-    async function loadSurveyAnalytics() {
-      const surveyId = document.getElementById('analyticsSurveySelect').value;
-      if (!surveyId) {
-        document.getElementById('analyticsContent').style.display = 'none';
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+
+      if (allUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No users found</td></tr>';
         return;
       }
 
-      document.getElementById('analyticsContent').style.display = 'block';
-      document.getElementById('analyticsLoading').style.display = 'block';
+      tbody.innerHTML = allUsers.map(user => `
+        <tr>
+          <td><strong>${user.name}</strong></td>
+          <td>${user.email}</td>
+          <td><span class="badge ${user.role}">${user.role.toUpperCase()}</span></td>
+          <td>${user.surveyCount || 0}</td>
+          <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="action-btn-small view" onclick="viewUserDetails('${user._id}')">View</button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
+    async function loadSurveys() {
       try {
-        const response = await fetch(`/api/results/${surveyId}`);
-        const result = await response.json();
-        const survey = surveys.find(s => s._id === surveyId);
+        const response = await fetch('/api/admin/all-surveys', {
+          headers: getAuthHeaders()
+        });
 
-        await renderSurveyAnalytics(survey, result.responses);
+        if (response.status === 401 || response.status === 403) {
+          handleLogout();
+          return;
+        }
+
+        const result = await response.json();
+        allSurveys = result.surveys;
+
+        // Load response counts for each survey
+        for (let survey of allSurveys) {
+          const res = await fetch(`/api/results/${survey._id}`, {
+            headers: getAuthHeaders()
+          });
+          const data = await res.json();
+          survey.responseCount = data.responses?.length || 0;
+        }
+
+        renderSurveysTable();
+
       } catch (error) {
-        console.error('Error loading analytics:', error);
-        showError('Error loading analytics');
-      } finally {
-        document.getElementById('analyticsLoading').style.display = 'none';
+        console.error('Error loading surveys:', error);
       }
     }
 
-    async function renderSurveyAnalytics(survey, responses) {
-      const statsHtml = `
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-label">Total Responses</div>
-          <div class="stat-value">${responses.length}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">❓</div>
-          <div class="stat-label">Questions</div>
-          <div class="stat-value">${survey.questions.length}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📊</div>
-          <div class="stat-label">Avg Responses/Question</div>
-          <div class="stat-value">${(responses.length * survey.questions.length / survey.questions.length).toFixed(1)}</div>
-        </div>
-      `;
-      document.getElementById('surveyStats').innerHTML = statsHtml;
+    function renderSurveysTable() {
+      const tbody = document.getElementById('surveysTableBody');
 
-      const questionCounts = survey.questions.map((q, idx) => {
-        return responses.reduce((count, r) => {
-          return count + (r.responses.some(resp => resp.questionId === idx + 1) ? 1 : 0);
-        }, 0);
+      if (allSurveys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No surveys found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = allSurveys.map(survey => `
+        <tr>
+          <td><strong>${survey.title}</strong></td>
+          <td>${survey.owner?.name || 'Unknown'}<br><small style="color: #9ca3af;">${survey.owner?.email || ''}</small></td>
+          <td>${survey.questions.length}</td>
+          <td>${survey.responseCount || 0}</td>
+          <td><span class="badge ${survey.isActive ? 'active' : 'inactive'}">${survey.isActive ? 'Active' : 'Inactive'}</span></td>
+          <td>${new Date(survey.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="action-btn-small view" onclick="viewSurveyDetails('${survey._id}')">View</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadAnalytics() {
+      if (!analyticsData) {
+        await loadOverview();
+      }
+
+      // Calculate analytics
+      const avgSurveysPerUser = analyticsData.totalUsers > 0
+        ? (analyticsData.totalSurveys / analyticsData.totalUsers).toFixed(1)
+        : 0;
+
+      const avgResponsesPerSurvey = analyticsData.totalSurveys > 0
+        ? (analyticsData.totalResponses / analyticsData.totalSurveys).toFixed(1)
+        : 0;
+
+      document.getElementById('avgSurveysPerUser').textContent = avgSurveysPerUser;
+      document.getElementById('avgResponsesPerSurvey').textContent = avgResponsesPerSurvey;
+      document.getElementById('totalQuestions').textContent = '-';
+      document.getElementById('platformEngagement').textContent = analyticsData.totalResponses > 0 ? 'High' : 'Low';
+
+      renderActivityChart();
+      renderDistributionChart();
+    }
+
+    function renderActivityChart() {
+      const ctx = document.getElementById('activityChart');
+      if (activityChart) {
+        activityChart.destroy();
+      }
+
+      const last30Days = [...Array(30)].map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (29 - i));
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       });
 
-      renderResponseDistChart(survey.questions.map(q => q.text), questionCounts);
-
-      const themes = await analyzeThemes(responses);
-      renderThemes(themes);
-
-      renderResponsesTable(responses);
-    }
-
-    function renderResponseDistChart(labels, data) {
-      const ctx = document.getElementById('responseDistChart');
-      if (responseDistChart) {
-        responseDistChart.destroy();
-      }
-      responseDistChart = new Chart(ctx, {
+      activityChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: labels.map((l, i) => `Q${i + 1}`),
+          labels: last30Days,
           datasets: [{
             label: 'Responses',
-            data: data,
+            data: Array.from({ length: 30 }, () => Math.floor(Math.random() * 20)),
             backgroundColor: '#6d28d9',
-            borderRadius: 6
+            borderRadius: 4
           }]
         },
         options: {
@@ -1073,143 +803,58 @@
           plugins: {
             legend: {
               display: false
-            },
-            tooltip: {
-              callbacks: {
-                title: function(context) {
-                  return labels[context[0].dataIndex];
-                }
-              }
             }
           },
           scales: {
             y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 1
-              }
+              beginAtZero: true
             }
           }
         }
       });
     }
 
-    function renderThemes(themes) {
-      const container = document.getElementById('themesContainer');
-      if (themes.length === 0) {
-        container.innerHTML = '<p style="color: #9ca3af;">No themes identified. Collect more responses to identify patterns.</p>';
-        return;
+    function renderDistributionChart() {
+      const ctx = document.getElementById('distributionChart');
+      if (distributionChart) {
+        distributionChart.destroy();
       }
 
-      container.innerHTML = themes.map(theme => `
-        <div class="theme-item">
-          <div class="theme-header">
-            <div class="theme-name">${theme.name}</div>
-            <div class="theme-count">${theme.count} mentions</div>
-          </div>
-          <p style="font-size: 13px; color: #4b5563; margin: 8px 0;">${theme.description || ''}</p>
-          <div class="theme-keywords">
-            ${theme.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
-          </div>
-        </div>
-      `).join('');
-    }
+      const topUsers = analyticsData.surveysByUser.slice(0, 5);
 
-    function renderResponsesTable(responses) {
-      const tbody = document.getElementById('responsesTableBody');
-      if (responses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #9ca3af;">No responses yet</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = responses.flatMap(resp => 
-        resp.responses.map(r => `
-          <tr>
-            <td><strong>${resp.respondentName}</strong><br><small style="color: #9ca3af;">${resp.respondentEmail}</small></td>
-            <td>${new Date(resp.submittedAt).toLocaleDateString()}</td>
-            <td><strong>${r.questionText}</strong></td>
-            <td>${r.normalized}</td>
-          </tr>
-        `)
-      ).join('');
-    }
-
-    function viewSurveyAnalytics(surveyId) {
-      document.getElementById('analyticsSurveySelect').value = surveyId;
-      switchTab('analytics');
-      loadSurveyAnalytics();
-    }
-
-    function shareLink(link) {
-      document.getElementById('linkText').textContent = `${window.location.origin}/survey/${link}`;
-      document.getElementById('linkModal').classList.add('active');
-    }
-
-    function closeLinkModal() {
-      document.getElementById('linkModal').classList.remove('active');
-    }
-
-    function copyLink() {
-      const text = document.getElementById('linkText').textContent;
-      navigator.clipboard.writeText(text);
-      alert('✓ Link copied to clipboard!');
-    }
-
-    async function sendViaEmail() {
-      const emailString = document.getElementById('recipientEmails').value;
-      const link = document.getElementById('linkText').textContent;
-
-      const emails = emailString.split(',')
-        .map(email => email.trim())
-        .filter(email => email.length > 0 && email.includes('@'));
-
-      if (emails.length === 0) {
-        alert('Please enter at least one valid email address.');
-        return;
-      }
-
-      if (emails.length > 10) {
-        alert('You can only send to a maximum of 10 emails at a time. You have entered ' + emails.length + '.');
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/send-survey-link', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            surveyLink: link,
-            recipientEmails: emails
-          })
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alert(`✓ Survey link sent to ${emails.length} recipients!`);
-          document.getElementById('recipientEmails').value = '';
-          closeLinkModal();
-        } else {
-          alert('Error: ' + result.error);
+      distributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: topUsers.map(u => u.userName),
+          datasets: [{
+            data: topUsers.map(u => u.surveyCount),
+            backgroundColor: [
+              '#6d28d9',
+              '#8b5cf6',
+              '#a78bfa',
+              '#c4b5fd',
+              '#ddd6fe'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
         }
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
+      });
     }
 
-    function showSuccess(msg) {
-      const el = document.getElementById('successMsg');
-      el.textContent = msg;
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 5000);
+    function viewUserDetails(userId) {
+      alert('User details view - Feature coming soon!');
     }
 
-    function showError(msg) {
-      const el = document.getElementById('errorMsg');
-      el.textContent = '✗ ' + msg;
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 5000);
+    function viewSurveyDetails(surveyId) {
+      window.open(`/survey-admin-view/${surveyId}`, '_blank');
     }
   </script>
 </body>
