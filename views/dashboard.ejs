@@ -652,7 +652,7 @@
 
 <body>
     <div class="navbar">
-        <h1>🎤 Audio Feedback Platform</h1>
+        <h1>Audio Feedback Platform</h1>
         <div class="nav-right">
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar">U</div>
@@ -697,6 +697,11 @@
             <button class="action-btn" onclick="openCreateModal()">
                 <span>➕</span> Create New Survey
             </button>
+            <button class="action-btn" onclick="openFocusGroupModal()"
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <span>👥</span> Create Focus Group
+            </button>
+
         </div>
 
         <div class="surveys-section">
@@ -705,6 +710,15 @@
             </div>
             <div class="questionnaires-grid" id="surveysContainer">
                 <!-- Surveys will be loaded here -->
+            </div>
+        </div>
+        <!-- FOCUS GROUPS SECTION -->
+        <div class="surveys-section">
+            <div class="section-title">
+                <span>📅 Focus Group Meetings</span>
+            </div>
+            <div class="questionnaires-grid" id="focusGroupsContainer">
+                <!-- Focus groups will be loaded here -->
             </div>
         </div>
     </div>
@@ -759,19 +773,59 @@
             <button class="submit-btn" onclick="sendViaEmail()">Send to All Recipients 📨</button>
         </div>
     </div>
+    <!-- CREATE FOCUS GROUP MODAL -->
+    <div id="focusGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Focus Group Meeting</h2>
+                <span class="close-modal" onclick="closeFocusGroupModal()">×</span>
+            </div>
+
+            <div class="form-group">
+                <label>📋 Select Questionnaire</label>
+                <select id="fg_questionnaireId"
+                    style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 15px;">
+                    <option value="">-- Select a Survey --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📝 Meeting Title</label>
+                <input type="text" id="fg_title" placeholder="e.g., Product Feedback Session">
+            </div>
+
+            <div class="form-group">
+                <label>📄 Description (Optional)</label>
+                <textarea id="fg_description" placeholder="Brief description..." rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>📧 Participant Emails (comma-separated)</label>
+                <textarea id="fg_participants" placeholder="user1@example.com, user2@example.com" rows="3"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>📅 Schedule Date & Time</label>
+                    <input type="datetime-local" id="fg_scheduledAt"
+                        style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;">
+                </div>
+                <div class="form-group">
+                    <label>⏱️ Duration (minutes)</label>
+                    <input type="number" id="fg_duration" value="60" min="15" max="180"
+                        style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;">
+                </div>
+            </div>
+
+            <button class="submit-btn" onclick="createFocusGroup()">Create & Send Invites 🚀</button>
+        </div>
+    </div>
 
     <script>
         let surveys = [];
         let currentUser = null;
         let questionCount = 0;
         let autoRefreshInterval = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            loadUserData();
-            loadSurveys();
-            startAutoRefresh();
-        });
 
         function checkAuth() {
             const token = localStorage.getItem('token');
@@ -797,7 +851,6 @@
         }
 
         function startAutoRefresh() {
-            // Refresh stats every 30 seconds
             autoRefreshInterval = setInterval(() => {
                 loadSurveys();
             }, 30000);
@@ -824,11 +877,9 @@
                 const data = await response.json();
                 surveys = data.questionnaires || [];
 
-                // Update stats with animation
                 animateValue('totalSurveys', surveys.length);
                 animateValue('activeSurveys', surveys.filter(s => s.isActive).length);
 
-                // Load total responses
                 let totalResponses = 0;
                 for (const survey of surveys) {
                     const res = await fetch(`/api/results/${survey._id}`, {
@@ -931,7 +982,7 @@
                 document.getElementById(id).remove();
                 renumberQuestions();
             } else {
-                alert('⚠️ At least 1 question is required');
+                alert('At least 1 question is required');
             }
         }
 
@@ -952,18 +1003,18 @@
             const questions = questionElements.map(q => q.value.trim()).filter(q => q.length > 0);
 
             if (!title) {
-                alert('⚠️ Please enter a survey title');
+                alert('Please enter a survey title');
                 return;
             }
 
             if (questions.length < 3) {
-                alert('⚠️ At least 3 questions are required');
+                alert('At least 3 questions are required');
                 return;
             }
 
             const submitBtn = document.querySelector('.submit-btn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating Survey... ⏳';
+            submitBtn.textContent = 'Creating Survey...';
 
             const token = localStorage.getItem('token');
             try {
@@ -978,17 +1029,17 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    alert('✅ Survey created successfully!');
+                    alert('Survey created successfully!');
                     closeCreateModal();
                     loadSurveys();
                 } else {
-                    alert('❌ Error: ' + result.error);
+                    alert('Error: ' + result.error);
                 }
             } catch (error) {
-                alert('❌ Network Error: ' + error.message);
+                alert('Network Error: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Create Survey 🚀';
+                submitBtn.textContent = 'Create Survey';
             }
         }
 
@@ -1004,7 +1055,7 @@
         function copyLink() {
             const text = document.getElementById('linkText').textContent;
             navigator.clipboard.writeText(text).then(() => {
-                const btn = event.target;
+                const btn = document.querySelector('#linkModal .copy-btn');
                 const originalText = btn.textContent;
                 btn.textContent = '✓ Copied!';
                 btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
@@ -1021,12 +1072,12 @@
             const emails = emailString.split(',').map(email => email.trim()).filter(email => email.length > 0 && email.includes('@'));
 
             if (emails.length === 0) {
-                alert('⚠️ Please enter at least one valid email address.');
+                alert('Please enter at least one valid email address.');
                 return;
             }
 
             if (emails.length > 10) {
-                alert('⚠️ You can only send to a maximum of 10 emails at a time.');
+                alert('You can only send to a maximum of 10 emails at a time.');
                 return;
             }
 
@@ -1047,23 +1098,207 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    alert(`✅ Survey link sent to ${emails.length} recipients!`);
+                    alert(`✅Survey link sent to ${emails.length} recipients!`);
                     document.getElementById('recipientEmails').value = '';
                     closeLinkModal();
                 } else {
                     alert('❌ Error: ' + result.error);
                 }
             } catch (error) {
-                alert('❌ Error: ' + error.message);
+                alert('Error: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Send to All Recipients 📨';
+                submitBtn.textContent = 'Send to All Recipients';
             }
         }
 
         async function viewResults(surveyId) {
             window.location.href = `/results/${surveyId}`;
         }
+
+        // Load focus groups
+        async function loadFocusGroups() {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/focus-groups', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                renderFocusGroups(data.focusGroups || []);
+            } catch (error) {
+                console.error('Error loading focus groups:', error);
+            }
+        }
+
+        // Render focus groups
+        function renderFocusGroups(focusGroups) {
+            const container = document.getElementById('focusGroupsContainer');
+
+            if (focusGroups.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <p>No focus groups yet. Create your first one!</p>
+            </div>
+        `;
+                return;
+            }
+
+            container.innerHTML = focusGroups.map(fg => {
+                const statusColors = {
+                    'scheduled': { bg: '#dbeafe', text: '#1e40af', emoji: '📅' },
+                    'in-progress': { bg: '#d1fae5', text: '#065f46', emoji: '🎙️' },
+                    'completed': { bg: '#e0e7ff', text: '#4338ca', emoji: '✅' },
+                    'cancelled': { bg: '#fee2e2', text: '#dc2626', emoji: '❌' }
+                };
+                const status = statusColors[fg.status] || statusColors.scheduled;
+
+                return `
+            <div class="survey-card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                    <div class="card-title">${fg.title}</div>
+                    <span style="background: ${status.bg}; color: ${status.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                        ${status.emoji} ${fg.status}
+                    </span>
+                </div>
+                <div class="card-desc">${fg.description || 'No description'}</div>
+                <div class="card-meta">
+                    <span>👥 ${fg.participants.length} participants</span>
+                    <span>📅 ${new Date(fg.scheduledAt).toLocaleString()}</span>
+                </div>
+                <div class="card-actions">
+                    <button class="action-btn-small view" onclick="window.open('${fg.meetingLink}', '_blank')">
+                        🔗 Join Meet
+                    </button>
+                    ${fg.status === 'scheduled' ?
+                        `<button class="action-btn-small share" onclick="startBot('${fg._id}')">🤖 Start Bot</button>` :
+                        `<button class="action-btn-small view" onclick="viewFocusGroupResults('${fg._id}')">📊 View Results</button>`
+                    }
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Open focus group modal
+        function openFocusGroupModal() {
+            document.getElementById('focusGroupModal').classList.add('active');
+
+            // Populate questionnaire dropdown
+            const select = document.getElementById('fg_questionnaireId');
+            select.innerHTML = '<option value="">-- Select a Survey --</option>';
+            surveys.forEach(s => {
+                select.innerHTML += `<option value="${s._id}">${s.title}</option>`;
+            });
+        }
+
+        // Close focus group modal
+        function closeFocusGroupModal() {
+            document.getElementById('focusGroupModal').classList.remove('active');
+        }
+
+        // Create focus group
+        async function createFocusGroup() {
+            const questionnaireId = document.getElementById('fg_questionnaireId').value;
+            const title = document.getElementById('fg_title').value.trim();
+            const description = document.getElementById('fg_description').value.trim();
+            const participantsStr = document.getElementById('fg_participants').value;
+            const scheduledAt = document.getElementById('fg_scheduledAt').value;
+            const duration = parseInt(document.getElementById('fg_duration').value);
+            if (!questionnaireId) {
+                alert('Please select a questionnaire');
+                return;
+            }
+            if (!title) {
+                alert('Please enter a meeting title');
+                return;
+            }
+            if (!scheduledAt) {
+                alert('Please select date and time');
+                return;
+            }
+
+            const participants = participantsStr
+                .split(',')
+                .map(email => email.trim())
+                .filter(email => email.includes('@'))
+                .map(email => ({ email }));
+
+            if (participants.length === 0) {
+                alert('Please enter at least one valid email');
+                return;
+            }
+
+            const submitBtn = document.querySelector('#focusGroupModal .submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Meeting...';
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/focus-groups/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title,
+                        description,
+                        questionnaireId,
+                        participants,
+                        scheduledAt,
+                        duration
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Focus Group created! Meeting invites sent.');
+                    closeFocusGroupModal();
+                    loadFocusGroups();
+                } else {
+                    console.error(' Server Error:', result.error);
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+                alert('Network Error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create & Send Invites';
+            }
+        }
+
+        // Start bot manually
+        async function startBot(focusGroupId) {
+            if (!confirm('Start the bot for this meeting?')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/focus-groups/${focusGroupId}/start`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Bot is joining the meeting!');
+                    loadFocusGroups();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Call loadFocusGroups on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadUserData();
+            loadSurveys();
+            loadFocusGroups();
+            startAutoRefresh();
+        });
     </script>
 </body>
 

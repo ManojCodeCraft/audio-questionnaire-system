@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   createdAt: {
@@ -43,5 +44,4 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };
-
 module.exports = mongoose.model("User", UserSchema);

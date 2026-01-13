@@ -22,9 +22,20 @@ const auth = require("./middleware/authMiddleware");
 
 // Import routes
 const authRoutes = require("./routes/auth");
+const focusGroupRoutes = require("./routes/focusGroup");
+const { google } = require("googleapis");
 
 dotenv.config();
 const app = express();
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const REDIRECT_URI = "http://localhost:3000/api/google/callback";
+
+const oauth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
+);
 
 // Ensure temp directory exists
 if (!fs.existsSync(path.join(__dirname, "temp"))) {
@@ -47,8 +58,8 @@ mongoose
       autoIndex: true,
     }
   )
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.log("❌ MongoDB error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(" MongoDB error:", err));
 
 // OpenAI Setup
 const openai = new OpenAI({
@@ -66,14 +77,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ============================================
-// ROUTES - Mount API Routes
-// ============================================
 app.use("/api/auth", authRoutes);
-
-// ============================================
-// PUBLIC ROUTES (No Auth Required)
-// ============================================
+app.use("/api/focus-groups", focusGroupRoutes);
 
 // LANDING PAGE
 app.get("/", (req, res) => {
@@ -129,6 +134,29 @@ app.get("/survey/:link", async (req, res) => {
 app.get("/results/:questionnaireId", (req, res) => {
   res.render("results");
 });
+
+app.get("/api/google/callback", async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.send("❌ No code received");
+
+  try {
+    const { tokens } = await oauth2Client.getToken(code);
+
+    // Save only once in .env, not in logs
+    if (tokens.refresh_token) {
+      console.log("Google OAuth connected successfully");
+    }
+
+    res.send(`
+      <h2>OAuth Successful</h2>
+      <p>You can close this tab now.</p>
+    `);
+  } catch (err) {
+    console.error("OAuth error:", err.message);
+    res.send("OAuth Failed");
+  }
+});
+
 // ============================================
 // QUESTIONNAIRE APIs (Protected)
 // ============================================
@@ -650,5 +678,5 @@ function extractBasicThemes(text) {
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
