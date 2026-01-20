@@ -2,6 +2,7 @@ const FocusGroup = require("../models/FocusGroup");
 const FocusGroupSession = require("../models/FocusGroupSession");
 const Questionnaire = require("../models/Questionnaire");
 const { createMeetingWithLink } = require("../services/googleCalendar");
+const path = require("path");
 const { startBot } = require("../services/botService");
 
 exports.createFocusGroup = async (req, res) => {
@@ -83,35 +84,55 @@ exports.getFocusGroups = async (req, res) => {
 
 exports.startFocusGroupBot = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const focusGroup = await FocusGroup.findById(id).populate("questionnaire");
+    const focusGroup = await FocusGroup.findById(req.params.id).populate(
+      "questionnaire",
+    );
 
     if (!focusGroup) {
-      return res.status(404).json({
+      return res
+        .status(404)
+        .json({ success: false, error: "Focus group not found" });
+    }
+
+    if (focusGroup.status !== "scheduled") {
+      return res.status(400).json({
         success: false,
-        error: "Focus group not found",
+        error: "Bot already started or meeting completed",
       });
     }
 
-    const session = new FocusGroupSession({
+    focusGroup.status = "in-progress";
+    await focusGroup.save();
+
+    const session = await FocusGroupSession.create({
       focusGroup: focusGroup._id,
-      status: "waiting",
+      startedAt: new Date(),
+      status: "in-progress",
       botStatus: "joining",
+      participants: focusGroup.participants.map((p) => ({
+        email: p.email,
+        name: p.email.split("@")[0],
+        joinedAt: new Date(),
+        speakingTime: 0,
+        responseCount: 0,
+      })),
     });
-    await session.save();
 
-    startBot(focusGroup, session);
+    const meetingLink = focusGroup.meetingLink;
 
-    res.json({
-      success: true,
-      message: "Bot is joining the meeting",
-      session: {
-        _id: session._id,
-        status: session.status,
-      },
+    const questions = focusGroup.questionnaire.questions
+      .sort((a, b) => a.order - b.order)
+      .map((q) => q.text);
+
+    startBot({
+      meetingLink,
+      questions,
+      sessionId: session._id.toString(),
     });
+
+    res.json({ success: true, message: "Bot started" });
   } catch (error) {
+    console.error("Start bot error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 };

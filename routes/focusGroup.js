@@ -9,7 +9,7 @@ router.post("/create", auth(), focusGroupController.createFocusGroup);
 // Get all focus groups
 router.get("/", auth(), focusGroupController.getFocusGroups);
 
-// Start bot for focus group
+// Start focus group session
 router.post("/:id/start", auth(), focusGroupController.startFocusGroupBot);
 
 // Get session status

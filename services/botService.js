@@ -1,62 +1,31 @@
-const FocusGroupSession = require("../models/FocusGroupSession");
-const { runMeetingBot } = require("../meetingbotpoc/src/playwright/meetingBot");
+const { spawn } = require("child_process");
+const path = require("path");
 
-/**
- * Start the bot for a focus group meeting
- */
-async function startBot(focusGroup, session) {
-  try {
-    console.log(`🤖 Starting bot for focus group: ${focusGroup.title}`);
+function startBot({ meetingLink, questions, sessionId }) {
+  console.log("Spawning meeting bot...");
 
-    // Update session status
-    session.botStatus = "joining";
-    session.startedAt = new Date();
-    await session.save();
+  const botPath = path.join(__dirname, "..", "meetingbot", "index.js");
 
-    // Run the bot (this is async and long-running)
-    runMeetingBot(focusGroup, session).catch(async (error) => {
-      console.error("❌ Bot error:", error);
+  const botProcess = spawn(
+    "node",
+    [
+      botPath,
+      "--meetLink",
+      meetingLink,
+      "--questions",
+      JSON.stringify(questions),
+      "--sessionId",
+      sessionId,
+    ],
+    {
+      detached: true,
+      stdio: "ignore",
+    },
+  );
 
-      // Log error to session
-      session.errorLogs.push({
-        timestamp: new Date(),
-        error: error.message,
-        context: "Bot execution failed",
-      });
-      session.botStatus = "disconnected";
-      session.status = "failed";
-      await session.save();
-    });
+  botProcess.unref();
 
-    return { success: true, message: "Bot started successfully" };
-  } catch (error) {
-    console.error("❌ Error starting bot:", error);
-    throw error;
-  }
+  console.log("Bot process started");
 }
 
-/**
- * Stop the bot (if needed)
- */
-async function stopBot(sessionId) {
-  try {
-    const session = await FocusGroupSession.findById(sessionId);
-    if (!session) {
-      throw new Error("Session not found");
-    }
-
-    session.botStatus = "ended";
-    session.endedAt = new Date();
-    await session.save();
-
-    return { success: true, message: "Bot stopped" };
-  } catch (error) {
-    console.error("❌ Error stopping bot:", error);
-    throw error;
-  }
-}
-
-module.exports = {
-  startBot,
-  stopBot,
-};
+module.exports = { startBot };

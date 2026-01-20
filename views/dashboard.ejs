@@ -1171,8 +1171,8 @@
                         🔗 Join Meet
                     </button>
                     ${fg.status === 'scheduled' ?
-                        `<button class="action-btn-small share" onclick="startBot('${fg._id}')">🤖 Start Bot</button>` :
-                        `<button class="action-btn-small view" onclick="viewFocusGroupResults('${fg._id}')">📊 View Results</button>`
+                        `<button type="button" class="action-btn-small share" onclick="startBot('${fg._id}')">🤖 Start Bot</button>` :
+                        `<button type="button" class="action-btn-small view" onclick="viewFocusGroupResults('${fg._id}')">📊 View Results</button>`
                     }
                 </div>
             </div>
@@ -1267,31 +1267,35 @@
                 submitBtn.textContent = 'Create & Send Invites';
             }
         }
+        // Start bot for focus group
 
-        // Start bot manually
         async function startBot(focusGroupId) {
-            if (!confirm('Start the bot for this meeting?')) return;
+            if (!confirm("Start the bot for this meeting?")) return;
 
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch(`/api/focus-groups/${focusGroupId}/start`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const result = await response.json();
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "Starting...";
 
-                if (result.success) {
-                    alert('Bot is joining the meeting!');
-                    loadFocusGroups();
-                } else {
-                    alert('Error: ' + result.error);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`/api/focus-groups/${focusGroupId}/start`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                btn.innerText = "Bot Active";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "Start Bot";
+                alert("Error: " + result.error);
             }
         }
 
-        // Call loadFocusGroups on page load
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
             loadUserData();
