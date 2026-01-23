@@ -6,9 +6,8 @@ const { google } = require("googleapis");
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
+  process.env.GOOGLE_REDIRECT_URI,
 );
-
 // Attach refresh token
 oauth2Client.setCredentials({
   refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
@@ -34,7 +33,7 @@ async function createMeetingWithLink(focusGroup) {
   try {
     const startTime = new Date(focusGroup.scheduledAt);
     const endTime = new Date(
-      startTime.getTime() + (focusGroup.duration || 60) * 60000
+      startTime.getTime() + (focusGroup.duration || 60) * 60000,
     );
 
     const event = {
@@ -75,7 +74,7 @@ async function createMeetingWithLink(focusGroup) {
 
     const meetLink =
       response.data.conferenceData?.entryPoints?.find(
-        (ep) => ep.entryPointType === "video"
+        (ep) => ep.entryPointType === "video",
       )?.uri || null;
 
     return {

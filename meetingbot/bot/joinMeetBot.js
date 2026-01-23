@@ -51,10 +51,6 @@ async function joinMeetAndAskQuestions(meetingLink, questions, sessionId) {
     const questionText = questions[i];
 
     await speakText(page, `Question ${i + 1}. ${questionText}`);
-
-    const responses = await captureResponsesUntilSilence(page);
-
-    await saveQuestionResponses(sessionId, questionText, responses);
   }
   const session = await FocusGroupSession.findById(sessionId);
 
@@ -120,76 +116,6 @@ async function speakText(page, text) {
     document.body.appendChild(audio);
     await audio.play();
   }, base64Audio);
-}
-
-async function getCaptionWithSpeaker(page) {
-  return page.evaluate(() => {
-    const blocks = document.querySelectorAll('[jsname="tgaKEf"]');
-    if (!blocks.length) return null;
-
-    const spans = blocks[blocks.length - 1].querySelectorAll("span");
-    if (spans.length < 2) return null;
-
-    return {
-      speakerName: spans[0].innerText.trim(),
-      text: spans[1].innerText.trim(),
-    };
-  });
-}
-
-async function captureResponsesUntilSilence(page) {
-  const responses = [];
-  let lastSpoken = Date.now();
-  let lastText = "";
-
-  while (true) {
-    const data = await getCaptionWithSpeaker(page);
-
-    if (data && data.text !== lastText) {
-      lastText = data.text;
-      lastSpoken = Date.now();
-
-      responses.push({
-        participantName: data.speakerName,
-        text: data.text,
-        timestamp: new Date(),
-      });
-    }
-
-    if (Date.now() - lastSpoken > 7000) break;
-
-    await page.waitForTimeout(1000);
-  }
-
-  return responses;
-}
-
-async function saveQuestionResponses(sessionId, questionText, responses) {
-  const session = await FocusGroupSession.findById(sessionId);
-
-  session.questionResponses.push({
-    questionText,
-    askedAt: new Date(),
-    responses: responses.map((r) => ({
-      participantName: r.participantName,
-      participantEmail: mapSpeakerToEmail(
-        r.participantName,
-        session.participants,
-      ),
-      text: r.text,
-      timestamp: r.timestamp,
-      duration: 0,
-    })),
-  });
-
-  await session.save();
-}
-
-function mapSpeakerToEmail(name, participants) {
-  const p = participants.find((p) =>
-    name.toLowerCase().includes(p.email.split("@")[0].toLowerCase()),
-  );
-  return p ? p.email : null;
 }
 
 module.exports = { joinMeetAndAskQuestions };

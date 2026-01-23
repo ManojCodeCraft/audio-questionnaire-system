@@ -34,7 +34,7 @@ const REDIRECT_URI = "http://localhost:3000/api/google/callback";
 const oauth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
-  REDIRECT_URI
+  REDIRECT_URI,
 );
 
 // Ensure temp directory exists
@@ -56,7 +56,7 @@ mongoose
     process.env.MONGODB_URI || "mongodb://localhost:27017/feedback-system",
     {
       autoIndex: true,
-    }
+    },
   )
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(" MongoDB error:", err));
@@ -360,7 +360,7 @@ app.post("/api/submit-response", async (req, res) => {
       const audioPath = path.join(
         __dirname,
         "temp",
-        `audio-${Date.now()}-${Math.random()}.wav`
+        `audio-${Date.now()}-${Math.random()}.wav`,
       );
 
       fs.writeFileSync(audioPath, audioBuffer);
@@ -433,7 +433,7 @@ app.post("/api/submit-response", async (req, res) => {
 app.get("/api/results/:questionnaireId", auth(), async (req, res) => {
   try {
     const questionnaire = await Questionnaire.findById(
-      req.params.questionnaireId
+      req.params.questionnaireId,
     );
     if (!questionnaire) {
       return res
@@ -492,7 +492,7 @@ app.post("/api/send-survey-link", auth(), async (req, res) => {
 
     const emailPromises = recipientEmails.map((email) => {
       const surveyLinkWithEmail = `${surveyLink}?email=${encodeURIComponent(
-        email
+        email,
       )}`;
 
       return transporter.sendMail({
