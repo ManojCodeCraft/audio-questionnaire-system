@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CivicTrack – Urban Issue Reporting & Resolution Platform</title>
+  <title>Audio Feedback System</title>
   <style>
     * {
       margin: 0;
@@ -17,44 +17,32 @@
       color: #1f2937;
     }
 
-    /* ── NAVBAR ── */
     .navbar {
-      background: linear-gradient(135deg, #0f4c81 0%, #1e6db5 100%);
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
       color: white;
-      padding: 18px 50px;
+      padding: 20px 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .logo {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .logo span {
-      font-size: 12px;
-      font-weight: 400;
-      opacity: 0.75;
-      display: block;
-      margin-top: 2px;
-    }
-
     .nav-links {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       align-items: center;
     }
 
     .nav-btn {
-      padding: 10px 22px;
+      padding: 10px 24px;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
@@ -67,554 +55,197 @@
     .nav-btn.login {
       background: transparent;
       color: white;
-      border: 2px solid rgba(255, 255, 255, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .nav-btn.login:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .nav-btn.signup {
-      background: #f59e0b;
-      color: #1f2937;
+      background: white;
+      color: #6d28d9;
     }
 
     .nav-btn.signup:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
     }
 
-    /* ── HERO ── */
     .hero {
-      background: linear-gradient(135deg, #0f4c81 0%, #1565a8 50%, #1e6db5 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 100px 50px;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -80px;
-      left: -80px;
-      width: 400px;
-      height: 400px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 50%;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -100px;
-      right: -60px;
-      width: 500px;
-      height: 500px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 50%;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background: rgba(245, 158, 11, 0.2);
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      color: #fcd34d;
-      padding: 6px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      letter-spacing: 0.5px;
     }
 
     .hero h1 {
-      font-size: 46px;
-      margin-bottom: 22px;
+      font-size: 48px;
+      margin-bottom: 20px;
       line-height: 1.2;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hero h1 em {
-      font-style: normal;
-      color: #fcd34d;
     }
 
     .hero p {
-      font-size: 18px;
+      font-size: 20px;
       margin-bottom: 40px;
-      opacity: 0.88;
-      max-width: 620px;
+      opacity: 0.9;
+      max-width: 600px;
       margin-left: auto;
       margin-right: auto;
-      line-height: 1.7;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
     }
 
     .cta-button {
       display: inline-block;
-      padding: 15px 36px;
-      background: #f59e0b;
-      color: #1f2937;
+      padding: 16px 40px;
+      background: white;
+      color: #6d28d9;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 18px;
       text-decoration: none;
       transition: all 0.3s ease;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
     .cta-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
-    .cta-outline {
-      display: inline-block;
-      padding: 15px 36px;
-      background: transparent;
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .cta-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* ── STATS BANNER ── */
-    .stats-banner {
-      background: #f59e0b;
-      padding: 28px 50px;
-      display: flex;
-      justify-content: center;
-      gap: 60px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1f2937;
-    }
-
-    .stat-label {
-      font-size: 13px;
-      color: #78350f;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
-    /* ── FEATURES ── */
     .features {
-      padding: 90px 50px;
+      padding: 80px 50px;
       background: white;
     }
 
-    .section-label {
+    .features h2 {
       text-align: center;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #1e6db5;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .features h2,
-    .how-it-works h2,
-    .roles h2,
-    .sla-section h2,
-    .cta-section h2 {
-      text-align: center;
-      font-size: 34px;
-      margin-bottom: 16px;
+      font-size: 36px;
+      margin-bottom: 60px;
       color: #1f2937;
-    }
-
-    .section-sub {
-      text-align: center;
-      color: #6b7280;
-      font-size: 16px;
-      max-width: 580px;
-      margin: 0 auto 56px;
-      line-height: 1.6;
     }
 
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 28px;
+      gap: 40px;
       max-width: 1200px;
       margin: 0 auto;
     }
 
     .feature-card {
-      padding: 32px 28px;
-      border-radius: 14px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
+      text-align: center;
+      padding: 30px;
+      border-radius: 12px;
+      background: #f9fafb;
       transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(135deg, #0f4c81, #1e6db5);
-      border-radius: 4px 0 0 4px;
     }
 
     .feature-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
-      border-color: #1e6db5;
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
     .feature-icon {
-      font-size: 42px;
-      margin-bottom: 18px;
+      font-size: 48px;
+      margin-bottom: 20px;
     }
 
     .feature-card h3 {
-      font-size: 20px;
-      margin-bottom: 12px;
+      font-size: 22px;
+      margin-bottom: 15px;
       color: #1f2937;
     }
 
     .feature-card p {
       color: #6b7280;
-      line-height: 1.65;
-      font-size: 15px;
+      line-height: 1.6;
     }
 
-    /* ── HOW IT WORKS ── */
     .how-it-works {
-      padding: 90px 50px;
-      background: #f0f5fb;
+      padding: 80px 50px;
+      background: #f9fafb;
+    }
+
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 60px;
+      color: #1f2937;
     }
 
     .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
       max-width: 1200px;
       margin: 0 auto;
-      position: relative;
     }
 
     .step {
       text-align: center;
-      padding: 32px 22px;
+      padding: 30px;
       background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-      transition: all 0.3s ease;
-    }
-
-    .step:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .step-number {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, #0f4c81 0%, #1e6db5 100%);
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
       color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
-      margin: 0 auto 18px;
+      margin: 0 auto 20px;
     }
 
     .step h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
+      font-size: 20px;
+      margin-bottom: 15px;
       color: #1f2937;
     }
 
     .step p {
       color: #6b7280;
       line-height: 1.6;
-      font-size: 14px;
     }
 
-    /* ── ROLES ── */
-    .roles {
-      padding: 90px 50px;
-      background: white;
-    }
-
-    .roles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 28px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .role-card {
-      padding: 36px 30px;
-      border-radius: 14px;
-      text-align: center;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
-    }
-
-    .role-card.citizen {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-    }
-
-    .role-card.authority {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-    }
-
-    .role-card.admin {
-      background: #fff7ed;
-      border-color: #fed7aa;
-    }
-
-    .role-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-    }
-
-    .role-icon {
-      font-size: 52px;
-      margin-bottom: 16px;
-    }
-
-    .role-card h3 {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .role-card.citizen h3 {
-      color: #1d4ed8;
-    }
-
-    .role-card.authority h3 {
-      color: #16a34a;
-    }
-
-    .role-card.admin h3 {
-      color: #ea580c;
-    }
-
-    .role-card p {
-      color: #6b7280;
-      line-height: 1.65;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
-
-    .role-tag {
-      display: inline-block;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      margin: 3px;
-    }
-
-    .citizen .role-tag {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .authority .role-tag {
-      background: #dcfce7;
-      color: #16a34a;
-    }
-
-    .admin .role-tag {
-      background: #ffedd5;
-      color: #ea580c;
-    }
-
-    /* ── SLA SECTION ── */
-    .sla-section {
-      padding: 90px 50px;
-      background: linear-gradient(135deg, #0f4c81 0%, #1e6db5 100%);
-      color: white;
-    }
-
-    .sla-section h2,
-    .sla-section .section-label {
-      color: white;
-    }
-
-    .sla-section .section-label {
-      opacity: 0.7;
-    }
-
-    .sla-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .sla-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 14px;
-      padding: 28px 24px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .sla-card:hover {
-      background: rgba(255, 255, 255, 0.17);
-      transform: translateY(-4px);
-    }
-
-    .sla-card .icon {
-      font-size: 38px;
-      margin-bottom: 14px;
-    }
-
-    .sla-card h4 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .sla-card p {
-      font-size: 14px;
-      opacity: 0.8;
-      line-height: 1.6;
-    }
-
-    /* ── ISSUE TYPES ── */
-    .issue-types {
-      padding: 80px 50px;
-      background: #f8fafc;
-    }
-
-    .issue-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 18px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .issue-chip {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 20px;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-      font-weight: 600;
-      font-size: 14px;
-      color: #374151;
-    }
-
-    .issue-chip:hover {
-      border-color: #1e6db5;
-      color: #1e6db5;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-    }
-
-    .issue-chip span {
-      font-size: 26px;
-    }
-
-    /* ── CTA ── */
     .cta-section {
-      padding: 90px 50px;
-      background: #1f2937;
+      padding: 80px 50px;
+      background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
       color: white;
       text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
     }
 
     .cta-section p {
       font-size: 18px;
       margin-bottom: 40px;
-      opacity: 0.8;
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
+      opacity: 0.9;
     }
 
-    /* ── FOOTER ── */
     .footer {
-      background: #111827;
+      background: #1f2937;
       color: white;
       padding: 40px 50px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .footer-logo {
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      text-align: center;
     }
 
     .footer p {
-      opacity: 0.55;
-      font-size: 14px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    .footer-links a {
-      color: rgba(255, 255, 255, 0.55);
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .footer-links a:hover {
-      color: white;
+      opacity: 0.7;
     }
 
     @media (max-width: 768px) {
       .navbar {
-        padding: 14px 20px;
+        padding: 15px 20px;
       }
 
       .hero {
@@ -622,300 +253,140 @@
       }
 
       .hero h1 {
-        font-size: 28px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .stats-banner {
-        gap: 30px;
-        padding: 24px 20px;
+        font-size: 32px;
       }
 
       .features,
       .how-it-works,
-      .roles,
-      .sla-section,
-      .issue-types,
       .cta-section {
         padding: 60px 20px;
       }
 
-      .footer {
-        flex-direction: column;
-        text-align: center;
-        padding: 30px 20px;
+      .features-grid,
+      .steps {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 
 <body>
-
-  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="logo">
-      🏛️ CivicTrack
-      <span>Municipal Governance Platform</span>
+      🎤 Audio Feedback
     </div>
     <div class="nav-links" id="navLinks">
       <a href="/login" class="nav-btn login">Login</a>
-      <a href="/signup" class="nav-btn signup">Report an Issue</a>
+      <a href="/signup" class="nav-btn signup">Sign Up</a>
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">🏛️ Digital Municipal Governance</div>
-    <h1>Urban Issue Reporting &amp; <em>Resolution Tracking</em> Platform</h1>
-    <p>Empowering citizens to report civic issues and holding municipalities accountable through structured SLA-based
-      workflows, transparent dashboards, and real-time resolution tracking.</p>
-    <div class="hero-buttons">
-      <a href="/signup" class="cta-button">🚀 Report an Issue</a>
-      <a href="/dashboard" class="cta-outline">📊 View Dashboard</a>
-    </div>
+    <h1>Collect Powerful Voice Feedback with AI</h1>
+    <p>Create surveys, collect audio responses, and gain insights with AI-powered transcription and analysis.</p>
+    <a href="/signup" class="cta-button">Get Started Free</a>
   </section>
 
-  <!-- STATS BANNER -->
-  <div class="stats-banner">
-    <div class="stat">
-      <div class="stat-number">5 Stages</div>
-      <div class="stat-label">Structured Issue Lifecycle</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">3 Roles</div>
-      <div class="stat-label">Citizen · Authority · Admin</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">SLA</div>
-      <div class="stat-label">Automated Deadline Enforcement</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">100%</div>
-      <div class="stat-label">Transparent Public Metrics</div>
-    </div>
-  </div>
-
-  <!-- FEATURES -->
   <section class="features">
-    <div class="section-label">Innovative Features</div>
-    <h2>Built for Accountable Governance</h2>
-    <p class="section-sub">A process-driven platform that transforms how urban local bodies manage, track, and resolve
-      citizen complaints—without AI dependency.</p>
-
+    <h2>Why Choose Audio Feedback?</h2>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">⏱️</div>
-        <h3>SLA-Based Resolution Tracking</h3>
-        <p>Automated deadline calculation based on issue type ensures every complaint has an enforceable resolution
-          timeline. Overdue issues are flagged instantly for accountability.</p>
+        <div class="feature-icon">🎙️</div>
+        <h3>Voice Responses</h3>
+        <p>Collect authentic, detailed feedback through audio responses instead of typed text.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">🔄</div>
-        <h3>Structured Issue Lifecycle</h3>
-        <p>Every issue passes through well-defined stages: Submitted → Verified → In Progress → Resolved → Closed. No
-          complaint falls through the cracks.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Role-Based Access Control</h3>
-        <p>Citizens, municipal authorities, and administrators each get tailored dashboards and permissions aligned with
-          their responsibilities in the grievance workflow.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🚨</div>
-        <h3>Automated Overdue Detection</h3>
-        <p>The system automatically flags overdue complaints and generates accountability metrics to help authorities
-          prioritize delayed resolutions.</p>
+        <div class="feature-icon">🤖</div>
+        <h3>AI Transcription</h3>
+        <p>Automatic transcription and normalization using OpenAI Whisper technology.</p>
       </div>
 
       <div class="feature-card">
         <div class="feature-icon">📊</div>
-        <h3>Public Transparency Dashboard</h3>
-        <p>Live dashboards display resolution metrics, complaint categories, ward-wise statistics, and SLA compliance
-          rates—open to all citizens.</p>
+        <h3>Smart Analytics</h3>
+        <p>Identify themes and patterns using NVivo-style coding and AI analysis.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">🏛️</div>
-        <h3>Process-Driven Governance</h3>
-        <p>Built on standardized workflows without AI dependency—ensuring reliability, explainability, and auditability
-          for government accountability standards.</p>
+        <div class="feature-icon">📧</div>
+        <h3>Easy Sharing</h3>
+        <p>Share surveys via email or direct link. No account required for respondents.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure & Private</h3>
+        <p>Your data is encrypted and secure. Full control over your surveys and responses.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Real-time Updates</h3>
+        <p>View responses as they come in with live dashboard updates.</p>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
   <section class="how-it-works">
-    <div class="section-label">Complaint Lifecycle</div>
     <h2>How It Works</h2>
-    <p class="section-sub">A transparent, five-stage lifecycle ensures every citizen complaint reaches full resolution
-      with accountability at each step.</p>
-
     <div class="steps">
       <div class="step">
         <div class="step-number">1</div>
-        <h3>📝 Submit Issue</h3>
-        <p>Citizen logs in and submits a complaint with location, category, description, and optional photo evidence.
-        </p>
+        <h3>Create Account</h3>
+        <p>Sign up for free in seconds. No credit card required.</p>
       </div>
+
       <div class="step">
         <div class="step-number">2</div>
-        <h3>✅ Authority Verification</h3>
-        <p>Municipal authority reviews and verifies the complaint. SLA deadline is automatically calculated and
-          assigned.</p>
+        <h3>Build Survey</h3>
+        <p>Create your questionnaire with custom questions in minutes.</p>
       </div>
+
       <div class="step">
         <div class="step-number">3</div>
-        <h3>🔧 In Progress</h3>
-        <p>Field teams are dispatched. Authority updates progress stages and logs action taken in real-time.</p>
+        <h3>Share Link</h3>
+        <p>Share your survey via email or copy the link to distribute.</p>
       </div>
+
       <div class="step">
         <div class="step-number">4</div>
-        <h3>🟢 Resolved</h3>
-        <p>Authority marks issue as resolved with resolution notes. Citizen receives notification to confirm.</p>
+        <h3>Collect Responses</h3>
+        <p>Respondents record audio answers directly in their browser.</p>
       </div>
+
       <div class="step">
         <div class="step-number">5</div>
-        <h3>🔒 Closed & Archived</h3>
-        <p>Issue is officially closed and contributes to the public performance metrics and analytics dashboard.</p>
+        <h3>Analyze Results</h3>
+        <p>View transcriptions, identify themes, and gain insights from your data.</p>
       </div>
     </div>
   </section>
 
-  <!-- ROLES -->
-  <section class="roles">
-    <div class="section-label">Role-Based Access Control</div>
-    <h2>Three Roles, One Platform</h2>
-    <p class="section-sub">Every stakeholder in the municipal grievance process has a dedicated view and tailored set of
-      actions.</p>
-
-    <div class="roles-grid">
-      <div class="role-card citizen">
-        <div class="role-icon">👤</div>
-        <h3>Citizen</h3>
-        <p>Report civic issues, track resolution status in real-time, and receive notifications on progress updates for
-          your complaints.</p>
-        <span class="role-tag">Submit Complaints</span>
-        <span class="role-tag">Track Status</span>
-        <span class="role-tag">View History</span>
-      </div>
-      <div class="role-card authority">
-        <div class="role-icon">🏢</div>
-        <h3>Municipal Authority</h3>
-        <p>Verify incoming complaints, assign field teams, update resolution stages, and manage SLA compliance for your
-          jurisdiction.</p>
-        <span class="role-tag">Verify Issues</span>
-        <span class="role-tag">Update Progress</span>
-        <span class="role-tag">SLA Monitor</span>
-      </div>
-      <div class="role-card admin">
-        <div class="role-icon">⚙️</div>
-        <h3>Administrator</h3>
-        <p>Oversee the entire platform, manage users and roles, configure SLA rules, and access full performance
-          analytics and reports.</p>
-        <span class="role-tag">User Management</span>
-        <span class="role-tag">SLA Config</span>
-        <span class="role-tag">Analytics</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SLA SECTION -->
-  <section class="sla-section">
-    <div class="section-label">SLA Enforcement</div>
-    <h2>Accountability Through Deadlines</h2>
-    <p class="section-sub" style="color:rgba(255,255,255,0.75); max-width:580px; margin: 0 auto 56px;">Service Level
-      Agreements ensure that every complaint type has a defined resolution window—with automated overdue flagging when
-      deadlines are missed.</p>
-
-    <div class="sla-cards">
-      <div class="sla-card">
-        <div class="icon">⚡</div>
-        <h4>Automated Deadline Setting</h4>
-        <p>SLA deadlines are calculated automatically based on issue category and priority upon verification.</p>
-      </div>
-      <div class="sla-card">
-        <div class="icon">🚩</div>
-        <h4>Overdue Flagging</h4>
-        <p>Issues exceeding their SLA window are automatically flagged red, pushing them to the top of authority queues.
-        </p>
-      </div>
-      <div class="sla-card">
-        <div class="icon">📈</div>
-        <h4>Performance Metrics</h4>
-        <p>Real-time metrics track SLA compliance rates, average resolution times, and pending vs. resolved ratios.</p>
-      </div>
-      <div class="sla-card">
-        <div class="icon">🔔</div>
-        <h4>Escalation Alerts</h4>
-        <p>Automated alerts notify senior authorities when complaints breach SLA thresholds to enforce accountability.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ISSUE TYPES -->
-  <section class="issue-types">
-    <div class="section-label">Categories Covered</div>
-    <h2>Report Any Civic Issue</h2>
-    <p class="section-sub">From potholes to power outages—our platform covers the full spectrum of urban civic
-      infrastructure complaints.</p>
-
-    <div class="issue-grid">
-      <div class="issue-chip"><span>🛣️</span> Road Damage</div>
-      <div class="issue-chip"><span>🗑️</span> Waste Management</div>
-      <div class="issue-chip"><span>💧</span> Water Supply</div>
-      <div class="issue-chip"><span>💡</span> Street Lighting</div>
-      <div class="issue-chip"><span>🌊</span> Drainage / Sewage</div>
-      <div class="issue-chip"><span>🌳</span> Park Maintenance</div>
-      <div class="issue-chip"><span>🏗️</span> Public Infrastructure</div>
-      <div class="issue-chip"><span>🚧</span> Road Encroachment</div>
-      <div class="issue-chip"><span>🐾</span> Stray Animals</div>
-      <div class="issue-chip"><span>📢</span> Noise Complaint</div>
-    </div>
-  </section>
-
-  <!-- CTA SECTION -->
   <section class="cta-section">
-    <h2>Ready to Transform Municipal Governance?</h2>
-    <p>Join a smarter, more accountable approach to civic issue resolution. Every complaint tracked. Every deadline
-      enforced. Every citizen heard.</p>
-    <div class="hero-buttons">
-      <a href="/signup" class="cta-button">🚀 Get Started — Report Now</a>
-      <a href="/dashboard" class="cta-outline" style="border-color:rgba(255,255,255,0.3);">📊 Explore Dashboard</a>
-    </div>
+    <h2>Ready to Get Started?</h2>
+    <p>Join thousands of users collecting valuable voice feedback today.</p>
+    <a href="/signup" class="cta-button">Create Free Account</a>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
-    <div class="footer-logo">🏛️ CivicTrack</div>
-    <p>&copy; 2024 Urban Issue Reporting & Resolution Tracking Platform. G. Pullaiah College of Engineering and
-      Technology.</p>
-    <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="#">Help</a>
-    </div>
+    <p>&copy; 2024 Audio Feedback System. All rights reserved.</p>
   </footer>
 
   <script>
+    // Check if user is already logged in
     window.addEventListener('DOMContentLoaded', () => {
       const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+
       if (token && user.email) {
         const navLinks = document.getElementById('navLinks');
-        const dest = user.role === 'admin' ? '/admin' : user.role === 'authority' ? '/authority' : '/dashboard';
-        navLinks.innerHTML = `<a href="${dest}" class="nav-btn signup">Go to Dashboard</a>`;
+        navLinks.innerHTML = `
+          <a href="${user.role === 'admin' ? '/admin' : '/dashboard'}" class="nav-btn signup">Go to Dashboard</a>
+        `;
       }
     });
   </script>
-
 </body>
 
 </html>
